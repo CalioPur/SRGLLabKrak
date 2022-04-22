@@ -37,4 +37,9 @@ public class menuManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void b_LoadLevel(int i)
+    {
+        SceneManager.LoadScene(i);
+    }
 }
