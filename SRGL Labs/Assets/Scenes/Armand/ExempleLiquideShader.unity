@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5823611891960498984, guid: 4ebd7b31e2e2b654c83b0ae1e31b8e3b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5823611892420229881, guid: 4ebd7b31e2e2b654c83b0ae1e31b8e3b, type: 3}
       propertyPath: MaxWobble
       value: 0.1
