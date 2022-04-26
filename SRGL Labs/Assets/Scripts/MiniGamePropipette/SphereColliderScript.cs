@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SphereColliderScript : MonoBehaviour
 {
-
+    public Material mat;
     public bool isBroken;
     // Start is called before the first frame update
     void Start()
@@ -12,6 +12,13 @@ public class SphereColliderScript : MonoBehaviour
         isBroken = false;
     }
 
+    private void Update()
+    {
+        if (mat.GetFloat("_fill") > 0.8f)
+        {
+            isBroken = true;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
