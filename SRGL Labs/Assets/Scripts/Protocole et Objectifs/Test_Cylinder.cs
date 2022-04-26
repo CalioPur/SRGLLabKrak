@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Test_Cylinder : MonoBehaviour
 {
+    public delegate void ObjectWasFilledEvent(Objective obj);
+    public static event ObjectWasFilledEvent OnObjectWasFilledEvent;
+
     List<(string, int)> listOfContainedElements = new List<(string, int)>();
 
-    private void Start()
+    void Start()
     {
-        listOfContainedElements.Add(("Solution 1", 10));
+        listOfContainedElements.Add(("Solution 3", 10));
         listOfContainedElements.Add(("Solution 2", 20));
     }
     void Update()
@@ -19,7 +22,7 @@ public class Test_Cylinder : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                print("aaaaaaaaaa");
+                //print("aaaaaaaaaa");
                 ObjectWasFilled();
             }
         }
@@ -27,7 +30,14 @@ public class Test_Cylinder : MonoBehaviour
 
     void ObjectWasFilled()
     {
-        ObjectiveContains obj = new ObjectiveContains(listOfContainedElements);
+        ObjectiveContains objct = new ObjectiveContains(listOfContainedElements);
+        //print(objct==null);
+        //print(OnObjectWasFilledEvent == null);
+        if(OnObjectWasFilledEvent != null)
+        {
+            OnObjectWasFilledEvent(objct);
+        }
+        
 
     }
 }

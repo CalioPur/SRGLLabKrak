@@ -14,6 +14,7 @@ public class ObjectiveContains : Objective
     }
 
     //Verification du type de l'objectif reçu puis verification des elements de la liste de l'objectif reçu
+    //Note : verifie que tous les elements voulus soient dans l'objet- pas de verification si il y a un/des éléments en trop dans l'objet
     public override bool Evaluate(Objective obj)
     {
         if(obj.GetType() == typeof(ObjectiveContains))

@@ -1,12 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Test_Level_Manager : MonoBehaviour
 {
     Protocole protocole = new Protocole();
 
-    
+    //Liste des toggles (ordonnés en fonction des objectifs)
+    public List<GameObject> toggleList;
+
+    private void OnEnable()
+    {
+        //subscribes to-
+        Test_Cylinder.OnObjectWasFilledEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
+        Protocole.OnObjectiveSuccessfullyCompletedEvent += toggleUpdate;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -19,8 +28,14 @@ public class Test_Level_Manager : MonoBehaviour
         ObjectiveContains obj1 = new ObjectiveContains(listOfContainedElements);
         this.protocole.listOfObjectives.Add(obj1);
         this.protocole.dictionaryOfObjectives.Add(obj1, false);
+
     }
 
+    void toggleUpdate()
+    {
+        //print(this.protocole.objectivesCounter);
+        toggleList[this.protocole.objectivesCounter].GetComponent<Toggle>().isOn = true;
+    }
 
     //loop pour subscribe (protocole's function) sur objets ?
 }
