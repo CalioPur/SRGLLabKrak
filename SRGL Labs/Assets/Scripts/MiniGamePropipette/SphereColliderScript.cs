@@ -12,11 +12,6 @@ public class SphereColliderScript : MonoBehaviour
         isBroken = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log(isBroken);
-    }
 
     private void OnTriggerEnter(Collider other)
     {

@@ -11,6 +11,7 @@ public class ScrollPipette : MonoBehaviour
     public TextMeshPro mText;
     public float step = 0.1f;
     float LastTimeSinceScroll = 0;
+    bool ICanScroll = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +21,7 @@ public class ScrollPipette : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((Mouse.current.scroll.ReadValue().y >0 && transform.position.y<7) || (Mouse.current.scroll.ReadValue().y < 0 && transform.position.y > 5))
+        if (((Mouse.current.scroll.ReadValue().y >0 && transform.position.y<7) || (Mouse.current.scroll.ReadValue().y < 0 && transform.position.y > 5)) && ICanScroll)
         {
             transform.position+= new Vector3(0,step*(Mouse.current.scroll.ReadValue().y/Mathf.Abs(Mouse.current.scroll.ReadValue().y)) , 0);
             if (cylinderColliderScript.isPlaced)
@@ -47,6 +48,11 @@ public class ScrollPipette : MonoBehaviour
                 if (transform.position.y < 5.4)
                 {
                     mText.SetText("La propipette est en place");
+                    if (Time.realtimeSinceStartup - LastTimeSinceScroll > 1f)
+                    {
+                        ICanScroll = false;
+                        mText.SetText("");
+                    }
                 }
 
             }
