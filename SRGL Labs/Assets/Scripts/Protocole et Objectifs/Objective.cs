@@ -1,9 +1,8 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;*/
 
-//On peut enlever monobehaviour plus tard
-public abstract class Objective : MonoBehaviour
+public abstract class Objective /*:Monobehavior*/
 {
     public abstract bool Evaluate(Objective obj);
 

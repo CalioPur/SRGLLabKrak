@@ -24,6 +24,7 @@ public class Protocole
         if (listOfObjectives[objectivesCounter].Evaluate(obj))
         {
             //Do something - Notifier les toggles
+            Debug.Log("Notify toggles");
             dictionaryOfObjectives[obj] = true;
             objectivesCounter++;
             if (objectivesCounter == listOfObjectives.Count)
@@ -33,5 +34,6 @@ public class Protocole
         }
     }
 
+    //AJOUTER SUBSCRIBE FUNCTION POUR OBJETS ?
 
 }
