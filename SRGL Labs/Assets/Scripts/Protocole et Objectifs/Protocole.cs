@@ -24,9 +24,11 @@ public class Protocole
     //Seulement pour objectifs ordonnés
     public void checkIfOrderedObjectiveIsValidated(Objective obj)
     {
-        //verif
+        
+        //Debug.Log(objectivesCounter);
         //Debug.Log(listOfObjectives[objectivesCounter].Evaluate(obj));
-        if (listOfObjectives[objectivesCounter].Evaluate(obj))
+        //Enlever premiere condition dans premier if si terminer le protocole empeche les interactions plus tard qui causent des index out of range
+        if (objectivesCounter < listOfObjectives.Count && listOfObjectives[objectivesCounter].Evaluate(obj))
         {
             //Do something - Notifier les toggles
             Debug.Log("Notify toggles");
@@ -41,6 +43,7 @@ public class Protocole
             if (objectivesCounter == listOfObjectives.Count)
             {
                 //Do something - Indiquer que le protocole est terminé
+                Debug.Log("End of protocole");
             }
         }
     }

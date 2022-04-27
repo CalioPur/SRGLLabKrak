@@ -12,7 +12,7 @@ public class Test_Level_Manager : MonoBehaviour
 
     private void OnEnable()
     {
-        //subscribes to-
+        //subscribes to- TOUJOURS EN ONENABLE
         Test_Cylinder.OnObjectWasFilledEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
         Protocole.OnObjectiveSuccessfullyCompletedEvent += toggleUpdate;
     }
@@ -28,6 +28,15 @@ public class Test_Level_Manager : MonoBehaviour
         ObjectiveContains obj1 = new ObjectiveContains(listOfContainedElements);
         this.protocole.listOfObjectives.Add(obj1);
         this.protocole.dictionaryOfObjectives.Add(obj1, false);
+
+        ObjectiveGrabItem obj2 = new ObjectiveGrabItem("Cylinder");
+        this.protocole.listOfObjectives.Add(obj2);
+        this.protocole.dictionaryOfObjectives.Add(obj2, false);
+
+        ObjectiveContainsStrict obj3 = new ObjectiveContainsStrict(listOfContainedElements);
+        this.protocole.listOfObjectives.Add(obj3);
+        this.protocole.dictionaryOfObjectives.Add(obj3, false);
+
 
     }
 
