@@ -11,7 +11,7 @@ public class ScrollPipette : MonoBehaviour
     public TextMeshPro mText;
     public float step = 0.1f;
     float LastTimeSinceScroll = 0;
-    bool ICanScroll = true;
+    public bool ICanScroll = true;
     // Start is called before the first frame update
     void Start()
     {
