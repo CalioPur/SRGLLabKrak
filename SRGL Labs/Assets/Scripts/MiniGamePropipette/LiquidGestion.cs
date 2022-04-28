@@ -21,25 +21,27 @@ public class LiquidGestion : MonoBehaviour
     void Update()
     {
         
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0)) //tant que j'appuiz
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                if (!scrollPipette.ICanScroll && poireVidée)
+                print(hit.collider.gameObject);
+                if (!scrollPipette.ICanScroll && poireVidée) //si la poire est bien vidée et bien placé
                 {
-                    if (hit.transform == remplirLaPropipette)
+                  
+                    if (hit.collider.transform == remplirLaPropipette)
                     {
                         fillInput += (0.1f * Time.deltaTime);
                     }
-                    if (hit.transform == viderLaPropipette)
+                    if (hit.collider.transform == viderLaPropipette)
                     {
                         fillInput -= (0.1f * Time.deltaTime);
                     }
                    
                 }
-                if (hit.transform == viderLaPoire)
+                if (hit.collider.transform == viderLaPoire)
                 {
                     poireVidée = true;
                 }
@@ -48,8 +50,8 @@ public class LiquidGestion : MonoBehaviour
         
         
 
-        mat.SetFloat("_fill", Mathf.Lerp(mat.GetFloat("_fill"), fillInput, 1));
-        if (fillInput < 0)
+        mat.SetFloat("_fill",fillInput);
+        if (fillInput < 0) //evite de partir dans les negatifs
         {
             fillInput = 0;
         }

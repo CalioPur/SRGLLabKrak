@@ -10,6 +10,6 @@ public class comprtementMenisque : MonoBehaviour
     //Color monMatColor;
     private void Update()
     { 
-        transform.position = new Vector3(0, (4*matFill.GetFloat("_fill"))+offset, 0);
+        transform.position = new Vector3(transform.position.x, (4*matFill.GetFloat("_fill"))+offset+(transform.parent.transform.position.y), transform.position.z);
     }
 }

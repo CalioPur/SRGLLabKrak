@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Cylinder
+  - pipette
+  - propipette
   layers:
   - Default
   - TransparentFX
