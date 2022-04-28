@@ -5,8 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - Cylinder
+<<<<<<< Updated upstream
   - pipette
   - propipette
+=======
+  - Poudre_Test
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
