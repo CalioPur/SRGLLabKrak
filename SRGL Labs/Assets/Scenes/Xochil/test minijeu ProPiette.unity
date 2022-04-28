@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.17276844, g: 0.21589245, b: 0.2978263, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -629,6 +629,11 @@ CapsuleCollider:
   m_Height: 0.26242322
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: -0.00000045727938}
+--- !u!4 &408356433 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400002, guid: 4f665beecc0be9e469ec31f98e732987, type: 3}
+  m_PrefabInstance: {fileID: 136509173}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &533299864
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,14 +818,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.6830127, y: -0.18301266, z: 0.18301266, w: 0.6830127}
+  m_LocalPosition: {x: 0, y: 163.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -30, z: 0}
 --- !u!114 &705507996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -964,7 +969,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 823812169}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -498.1}
+  m_LocalPosition: {x: 0, y: 0, z: -393.242}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1319,6 +1324,25 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1244247957 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 4f665beecc0be9e469ec31f98e732987, type: 3}
+  m_PrefabInstance: {fileID: 136509173}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1244247961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244247957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9719fd4b710bb745ac4861aa795982c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mat: {fileID: 2100000, guid: cf307b172da26084ba07358555eb3ff2, type: 2}
+  menisque: {fileID: 3048522611840453472}
 --- !u!1001 &1519033174
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1982,13 +2006,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3048522611840453472}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 4.25, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0.12468, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5000001, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_Father: {fileID: 408356433}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &3048522611840453472
 GameObject:
@@ -2001,6 +2025,7 @@ GameObject:
   - component: {fileID: 3016779674755732546}
   - component: {fileID: 2802928999194517913}
   - component: {fileID: 6659671733549227096}
+  - component: {fileID: 6659671733549227097}
   m_Layer: 0
   m_Name: Cylindre
   m_TagString: Untagged
@@ -2050,3 +2075,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6659671733549227097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3048522611840453472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3e8654e137c69b4487723fe74c5e866, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  matFill: {fileID: 2100000, guid: cf307b172da26084ba07358555eb3ff2, type: 2}
+  offset: 1.723
