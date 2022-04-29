@@ -7,6 +7,8 @@ TagManager:
   - Cylinder
   - pipette
   - propipette
+  - becher
+  - pipetteA
   layers:
   - Default
   - TransparentFX

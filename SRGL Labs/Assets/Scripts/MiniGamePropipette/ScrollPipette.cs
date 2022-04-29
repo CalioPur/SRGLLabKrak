@@ -24,6 +24,7 @@ public class ScrollPipette : MonoBehaviour
     {
         bienPlace = false;
         sphereColliderScript.isBroken = false;
+        sphereColliderScript.isOverFilled= false;
         LastTimeSinceScroll = 0;
         ICanScroll = true;
     }
@@ -83,6 +84,10 @@ public class ScrollPipette : MonoBehaviour
         if (Time.realtimeSinceStartup - LastTimeSinceScroll > 0.5f) //remet l'avancé par scroll a 0.05 apres avoir atedu une demi seconde.
         {
             step = 0.05f;
+        }
+        if (sphereColliderScript.isOverFilled)
+        {
+            bienPlace = false;
         }
     }
 }

@@ -15,9 +15,12 @@ public class gameManagerPropipette : MonoBehaviour
     Vector3 cameraBasePos;
     Vector3 propBasePos;
     bool mouseEnabled = true;
+    GameObject becher;
 
-    private void Awake()
+    private void Start()
     {
+        gameObject.GetComponent<LiquidGestion>().mat.SetFloat("_fill", 0);
+        gameObject.GetComponent<LiquidGestion>().enabled = false;
         cameraBasePos = transform.position;
         propBasePos = propipette.transform.position;
         
@@ -30,7 +33,7 @@ public class gameManagerPropipette : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.collider.CompareTag("pipette") && ItemIHold == null) //si je clique sur la pipette sans rien avoir dans la main
+                if ((hit.collider.CompareTag("pipette")|| hit.collider.CompareTag("pipetteA")) && ItemIHold == null) //si je clique sur la pipette sans rien avoir dans la main
                 {
                     ItemIHold = hit.collider.gameObject;
                     StopAllCoroutines();
@@ -47,12 +50,21 @@ public class gameManagerPropipette : MonoBehaviour
                     
                     
                 }
+                if (hit.collider.CompareTag("becher") && ItemIHold.CompareTag("pipetteA")) //si je clique sur le becher en ayant la pipettte associé a la propipette
+                {
+                    becher = hit.collider.gameObject;
+                    gameObject.GetComponent<LiquidGestion>().enabled = true;
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y+1.5f, becher.transform.position.z)));
+                    StartCoroutine(SmoothPos(gameObject, transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y + 3, becher.transform.position.z-8)));
+                    becher.GetComponentInChildren<Camera>().enabled = true;
+                }
             }
-            else if (ItemIHold != null) //si je clique dans le vide je replace tout a sa place
-            {
+            else if (ItemIHold.tag == "pipette") //si je clique dans le vide et que je tiens la pipette 
+            { 
                 if (propipette.GetComponentInChildren<ScrollPipette>().bienPlace) //si la propipette est bien plaçé
                 {
                     propipette.transform.parent = ItemIHold.transform; //on dit que son parent est la pipette
+                    ItemIHold.tag = "pipetteA";
                 }
                 else
                 {
@@ -65,6 +77,34 @@ public class gameManagerPropipette : MonoBehaviour
                 propipette.GetComponent<ScrollPipette>().ICanScroll = false;
                 
                 ItemIHold = null;
+            }
+            else if (ItemIHold.tag == "pipetteA") //si je clique dans le vide et que je tiens la pipette+propipette
+            {
+                if (propipette.GetComponentInChildren<ScrollPipette>().bienPlace)
+                {
+                    gameObject.GetComponent<LiquidGestion>().enabled = false;
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, ItemIHold.transform.position.y, 0)));
+                    StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
+                    becher.GetComponentInChildren<Camera>().enabled = false;
+                    ItemIHold = null;
+                }
+                else //si le niveau de liquide dépasse, on recomence tout
+                {
+
+                    gameObject.GetComponent<LiquidGestion>().fillInput = 0;
+                    gameObject.GetComponent<LiquidGestion>().mat.SetFloat("_fill", 0);
+                    propipette.transform.parent = transform.parent;
+                    StartCoroutine(SmoothPos(propipette, propipette.transform.position, propBasePos));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, ItemIHold.transform.position.y, 0)));
+                    StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
+                    gameObject.GetComponent<LiquidGestion>().enabled = false;
+                    becher.GetComponentInChildren<Camera>().enabled = false;
+                    propipette.GetComponent<ScrollPipette>().enabled = false;
+                    ItemIHold.tag = "pipette";
+                    Sphere.tag = "propipette"; //je remet son tag a propipette pour pouvoir interagir a nouveau avec
+                    ItemIHold = null;
+
+                }
             }
         }
     }

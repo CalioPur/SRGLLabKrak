@@ -13,8 +13,9 @@ public class LiquidGestion : MonoBehaviour
 
     bool poireVidée=false;
     // Start is called before the first frame update
-    void Start()
+    void awake()
     {
+        mat.SetFloat("_fill", fillInput);
     }
 
     // Update is called once per frame
@@ -27,17 +28,17 @@ public class LiquidGestion : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                print(hit.collider.gameObject);
+                //print(hit.collider.gameObject);
                 if (!scrollPipette.ICanScroll && poireVidée) //si la poire est bien vidée et bien placé
                 {
                   
                     if (hit.collider.transform == remplirLaPropipette)
                     {
-                        fillInput += (0.1f * Time.deltaTime);
+                        fillInput += (0.15f * Time.deltaTime);
                     }
                     if (hit.collider.transform == viderLaPropipette)
                     {
-                        fillInput -= (0.1f * Time.deltaTime);
+                        fillInput -= (0.05f * Time.deltaTime);
                     }
                    
                 }
