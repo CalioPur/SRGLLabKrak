@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FullProtocole_Test_Fiole : MonoBehaviour
+public class FullProtocole_Test_Poudre : MonoBehaviour
 {
-    public delegate void ObjectHadSomethingHappen(Objective obj);
-    public static event ObjectHadSomethingHappen ObjectHadSomethingHappenEvent;
+    public delegate void ObjectHadSomethingHappenPoudre(Objective obj);
+    public static event ObjectHadSomethingHappenPoudre ObjectHadSomethingHappenEventPoudre;
 
     public delegate void ObjectIsGrabbed(GameObject gObj);
     public static event ObjectIsGrabbed ObjectIsGrabbedEvent;
     public static event ObjectIsGrabbed ObjectIsDroppedEvent;
 
-    Dictionary<string,int> dictionaryOfContainedElements = new Dictionary<string,int>();
+    Dictionary<string, int> dictionaryOfContainedElements = new Dictionary<string, int>();
 
     public GameObject testLiquid;
 
@@ -24,7 +24,7 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
 
     // Update is called once per frame
     //mouse button 0 -> interaction / prendre
-    //mouse button 1 -> ajouter de l'eau distillée (100)
+    //mouse button 1 -> ajouter de la poudre (5)
     //mouse button 3 -> empty bottle ?
     void Update()
     {
@@ -36,33 +36,33 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
             {
                 Debug.Log("Held");
                 isGrabbed = !isGrabbed;
-                //ObjectGotGrabbed();
+                ObjectGotGrabbed();
             }
-                
+
         }
-        else if(Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonDown(1))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            
+
             if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.name.Equals(this.name))
             {
-                if (this.dictionaryOfContainedElements.ContainsKey("eau distillée"))
+                if (this.dictionaryOfContainedElements.ContainsKey("poudre"))
                 {
 
-                    this.dictionaryOfContainedElements["eau distillée"] += 25;
-                    Debug.Log("+25");
+                    this.dictionaryOfContainedElements["poudre"] += 5;
+                    Debug.Log("+5");
                 }
                 else
                 {
-                    this.dictionaryOfContainedElements.Add("eau distillée", 25);
-                    Debug.Log("+25 (set)");
+                    this.dictionaryOfContainedElements.Add("poudre", 5);
+                    Debug.Log("+5 (set)");
                 }
                 ObjectWasFilled();
                 testLiquid.SetActive(true);
             }
 
-            
+
         }
         else if (Input.GetMouseButtonDown(2))
         {
@@ -75,16 +75,16 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
                 testLiquid.SetActive(false);
                 Debug.Log("Cleared");
             }
-                
+
         }
     }
 
     void ObjectWasFilled()
     {
-        ObjectiveContainsDictionary objcd = new ObjectiveContainsDictionary(this.dictionaryOfContainedElements,1) ;
-        if (ObjectHadSomethingHappenEvent != null)
+        ObjectiveContainsDictionary objcd = new ObjectiveContainsDictionary(this.dictionaryOfContainedElements, 1);
+        if (ObjectHadSomethingHappenEventPoudre != null)
         {
-            ObjectHadSomethingHappenEvent(objcd);
+            ObjectHadSomethingHappenEventPoudre(objcd);
         }
 
 
@@ -93,15 +93,14 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
     void ObjectGotGrabbed()
     {
         ObjectiveGrabItem objgi = new ObjectiveGrabItem(this.tag);
-        if (ObjectHadSomethingHappenEvent != null)
+        if (ObjectHadSomethingHappenEventPoudre != null)
         {
-            ObjectHadSomethingHappenEvent(objgi);
+            ObjectHadSomethingHappenEventPoudre(objgi);
         }
         if (ObjectIsGrabbedEvent != null && isGrabbed)
         {
             ObjectIsGrabbedEvent(this.transform.gameObject);
-        }
-        else if (ObjectIsDroppedEvent != null && !isGrabbed)
+        }else if (ObjectIsDroppedEvent != null && !isGrabbed)
         {
             ObjectIsDroppedEvent(this.transform.gameObject);
 
