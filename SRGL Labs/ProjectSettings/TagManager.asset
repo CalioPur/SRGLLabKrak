@@ -3,28 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-<<<<<<< Updated upstream
   tags:
-<<<<<<< Updated upstream
-  - Cylinder
-<<<<<<< Updated upstream
-  - pipette
   - propipette
-<<<<<<< HEAD
+  - pipette
   - becher
   - pipetteA
-=======
-=======
-  - Poudre_Test
->>>>>>> Stashed changes
->>>>>>> main
-=======
+  - Spin
   - Poudre_Test
   - Fiole_Test
->>>>>>> Stashed changes
-=======
-  tags: []
->>>>>>> Stashed changes
+  - Cylinder
+  - erlenmeyer
   layers:
   - Default
   - TransparentFX

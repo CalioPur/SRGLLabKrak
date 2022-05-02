@@ -58,6 +58,12 @@ public class gameManagerPropipette : MonoBehaviour
                     StartCoroutine(SmoothPos(gameObject, transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y + 3, becher.transform.position.z-8)));
                     becher.GetComponentInChildren<Camera>().enabled = true;
                 }
+                if(hit.collider.CompareTag("erlenmeyer") && ItemIHold.CompareTag("pipetteA") && ItemIHold.GetComponentInChildren<SphereColliderScript>().isFilled) //si je clique sur l'erlenmeyer alors que ma pipette est remplie
+                {
+                    GameObject erlen = hit.collider.gameObject;
+                    StartCoroutine(PipDansErlen(ItemIHold, erlen, ItemIHold.transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4f, erlen.transform.position.z)));
+                    StartCoroutine(SmoothPos(gameObject, transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4, erlen.transform.position.z - 8)));
+                }
             }
             else if (ItemIHold.tag == "pipette") //si je clique dans le vide et que je tiens la pipette 
             { 
@@ -72,7 +78,7 @@ public class gameManagerPropipette : MonoBehaviour
                     propipette.GetComponent<ScrollPipette>().enabled = false; //on désactive le script pour le reboot quand on le reprendra
                     Sphere.tag = "propipette"; //je remet son tag a propipette pour pouvoir interagir a nouveau avec
                 }
-                StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, ItemIHold.transform.position.y, 0)));
+                StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 3.3f, 0)));
                 StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
                 propipette.GetComponent<ScrollPipette>().ICanScroll = false;
                 
@@ -83,9 +89,12 @@ public class gameManagerPropipette : MonoBehaviour
                 if (propipette.GetComponentInChildren<ScrollPipette>().bienPlace)
                 {
                     gameObject.GetComponent<LiquidGestion>().enabled = false;
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, ItemIHold.transform.position.y, 0)));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 3.3f, 0)));
                     StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
-                    becher.GetComponentInChildren<Camera>().enabled = false;
+                    if (becher != null)
+                    {
+                        becher.GetComponentInChildren<Camera>().enabled = false;
+                    }
                     ItemIHold = null;
                 }
                 else //si le niveau de liquide dépasse, on recomence tout
@@ -95,7 +104,7 @@ public class gameManagerPropipette : MonoBehaviour
                     gameObject.GetComponent<LiquidGestion>().mat.SetFloat("_fill", 0);
                     propipette.transform.parent = transform.parent;
                     StartCoroutine(SmoothPos(propipette, propipette.transform.position, propBasePos));
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, ItemIHold.transform.position.y, 0)));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 3.3f, 0)));
                     StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
                     gameObject.GetComponent<LiquidGestion>().enabled = false;
                     becher.GetComponentInChildren<Camera>().enabled = false;
@@ -105,10 +114,11 @@ public class gameManagerPropipette : MonoBehaviour
                     ItemIHold = null;
 
                 }
+                becher = null;
             }
         }
     }
-    public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //annimation de deplacement
+    public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //annimation de deplacement base
     {
         mouseEnabled = false;
         float startTime = Time.realtimeSinceStartup;
@@ -119,6 +129,64 @@ public class gameManagerPropipette : MonoBehaviour
             yield return null;
             currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
         }
+        mouseEnabled = true;
+    }
+
+    public IEnumerator PipDansErlen(GameObject targetToMove,GameObject erlenmeyer, Vector3 a, Vector3 b) //annimation de deplacement pipette dans erlen
+    {
+        mouseEnabled = false;
+        gameObject.GetComponent<LiquidGestion>().enabled = true;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f); //met la pipette au dessus de l'erlenmeyer
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        startTime = Time.realtimeSinceStartup;
+        currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f); //l'enfonce un peu
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(b, new Vector3(b.x, b.y - 0.5f, b.z), animationCurve.Evaluate(currentTimePercentage)) ;
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        float fillValue = targetToMove.GetComponentInChildren<menisqueDisp>().mat.GetFloat("_fill");
+        startTime = Time.realtimeSinceStartup;
+        currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f); // vide le liquide
+        Material erlenMat = erlenmeyer.GetComponent<GetMaterialScript>().mat;
+        float fillErlen = erlenMat.GetFloat("_fill");
+        print(fillErlen);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.GetComponentInChildren<menisqueDisp>().mat.SetFloat("_fill", Mathf.Lerp(fillValue, 0, animationCurve.Evaluate(currentTimePercentage)));
+            erlenMat.SetFloat("_fill", Mathf.Lerp(fillErlen, fillErlen+0.05f, animationCurve.Evaluate(currentTimePercentage)));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+
+        gameObject.GetComponent<LiquidGestion>().fillInput = 0;
+
+
+        startTime = Time.realtimeSinceStartup;
+        currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f); //remontte un peu la pipette
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(new Vector3(b.x, b.y - 0.5f, b.z), b, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        startTime = Time.realtimeSinceStartup;
+        currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f); //remet la pipette a sa place
+        StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(b, a, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        gameObject.GetComponent<LiquidGestion>().enabled = false;
         mouseEnabled = true;
     }
 }
