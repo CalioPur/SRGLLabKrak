@@ -2234,7 +2234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 2100000, guid: cf307b172da26084ba07358555eb3ff2, type: 2}
-  fillValue: 0.7
+  fillValue: 0.6
   isBroken: 0
   isFilled: 0
   isOverFilled: 0
