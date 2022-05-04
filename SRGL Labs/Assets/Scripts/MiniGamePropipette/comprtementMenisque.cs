@@ -10,6 +10,21 @@ public class comprtementMenisque : MonoBehaviour
     //Color monMatColor;
     private void Update()
     { 
-        transform.position = new Vector3(transform.position.x, (4*matFill.GetFloat("_fill"))+offset+(transform.parent.transform.position.y), transform.position.z);
+        this.transform.position = new Vector3(this.transform.position.x, (4*matFill.GetFloat("_fill"))+offset+(this.transform.parent.transform.position.y), this.transform.position.z);
+        if(getRelativePosition(transform.parent.transform, transform.position).y>1.35f)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, 5, this.transform.position.z);
+        }
+    }
+
+    public Vector3 getRelativePosition(Transform origin, Vector3 position)
+    {
+        Vector3 distance = position - origin.position;
+        Vector3 relativePosition = Vector3.zero;
+        relativePosition.x = Vector3.Dot(distance, origin.right.normalized);
+        relativePosition.y = Vector3.Dot(distance, origin.up.normalized);
+        relativePosition.z = Vector3.Dot(distance, origin.forward.normalized);
+
+        return relativePosition;
     }
 }

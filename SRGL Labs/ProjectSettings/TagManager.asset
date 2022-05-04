@@ -11,8 +11,8 @@ TagManager:
   - Spin
   - Poudre_Test
   - Fiole_Test
-  - Cylinder
   - erlenmeyer
+  - pissette
   layers:
   - Default
   - TransparentFX
