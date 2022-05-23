@@ -8,7 +8,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     public AnimationCurve animationCurve;
 
+    //si possibilité interaction
     bool mouseEnabled = true;
+
     public float animationDuration;
 
     private Protocole protocole = new Protocole();
@@ -26,6 +28,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         ContainerSimple.ObjectHadSomethingHappenEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
         HolderSimple.ObjectHadSomethingHappenEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
         Protocole.OnObjectiveSuccessfullyCompletedEvent += ToggleUpdate;
+        PopupScript.OnPopupOpensEvent += DisableMouse;
+        PopupScript.OnPopupClosesEvent += EnableMouse;
+
     }
 
     void ToggleUpdate()
@@ -89,7 +94,10 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
         //end protocole
 
+     
     }
+
+    //*******************************************GET RID OF HOLDERS ?
 
     private void Update()
     {
@@ -113,12 +121,21 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
                 }
                 else //pas le meme objet
                 {
+                    
                     if (this.isHolding.CompareTag("container") && obj.CompareTag("container"))
                     {
+                        //IDEAS TO KEEP IN MIND 
+                        //**************************** changer par fonction qui prend en charge la creation de toutes les erreurs ??
+                        //**************************** code pour verif si container simple ou autre ?
+                        //**************************** faire classe container generale (pas container puis container simple et autre) ??
+                        setAndCheckFillErrors(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+
                         obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
                     }
                     else if (this.isHolding.CompareTag("holder") && obj.CompareTag("container"))
                     {
+                        setAndCheckFillErrors(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+
                         obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements);
                     }
                     else if (this.isHolding.CompareTag("container") && obj.CompareTag("scale"))
@@ -130,6 +147,8 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         }
 
         // ******* FILL - remplissage d'un element 
+        //PENSER A AJOUTER ERREUR ICI AUSSI
+        //Note : self fill ne sera pas utilisée dans le version complete
         else if (Input.GetMouseButtonDown(1) && mouseEnabled)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -139,7 +158,8 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
                 GameObject obj = hit.transform.gameObject;
                 if (obj.CompareTag("container"))
                 {
-                    obj.GetComponent<Container>().SelfFill();
+
+                   obj.GetComponent<Container>().SelfFill();
                 }
                 else if (obj.CompareTag("holder"))
                 {
@@ -168,6 +188,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         }
     }
 
+    //saisir un objet
     void HoldObject(GameObject gObj)
     {
         StopAllCoroutines();
@@ -189,6 +210,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         }
     }
 
+    //lacher un objet (retourne à sa position precedente 
     void DropObject()
     {
         StopAllCoroutines();
@@ -196,6 +218,24 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         this.isHolding.transform.position = positionBeforeHeld;
         this.isHolding = null;
 
+    }
+
+    void EnableMouse()
+    {
+        mouseEnabled = true;
+    }
+
+    void DisableMouse()
+    {
+        mouseEnabled = false;
+    }
+
+    //creation des erreurs à verifier + regarde si erreurs ou non
+    //AJOUTER AUTRES PARAMETRES SI NECESSAIRE
+    void setAndCheckFillErrors(Dictionary<string,int> pouredIn, Dictionary<string, int> alreadyIn)
+    {
+        ErrorWaterInAcid er1 = new ErrorWaterInAcid(pouredIn,alreadyIn);
+        protocole.checkIfErrorWasDone(er1);
     }
 
     //add loop to set all toggle labels from text file + set all toggles to isOn= false + interactable off

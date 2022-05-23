@@ -12,13 +12,21 @@ public class ErrorWaterInAcid : Error
         this.elementsPouredIn = pouredIn;
     }
 
+    //Message pour le popup
+    public override string ErrorMessage()
+    {
+        return "Attention ! Il ne faut pas mettre l'eau dans l'acide.";
+    }
+
 
     //NE PREND EN COMPTE QUE SI ON VERSE SEULEMENT DE L'EAU DANS L'ACIDE (sans eau avec)
     //(eau avec ou sans autres éléments ?)
     public override bool EvaluateError(Error error)
     {
+        
         if (error.GetType() == typeof(ErrorWaterInAcid))
         {
+            
             ErrorWaterInAcid temp = (ErrorWaterInAcid)error;
             if (temp.elementsPouredIn.ContainsKey("eau distillée") && temp.elementsAlreadyPresent.ContainsKey("acide") && !temp.elementsAlreadyPresent.ContainsKey("eau distillée"))
             {

@@ -63,6 +63,7 @@ public class ContainerSimple : Container
     }
 
     //Remplissage particulié de l'objet (un élément specifique)
+    //(remplacer par autre chose plus tard)
     public override void SelfFill()
     {
         if (this.dictionaryOfContainedElements.ContainsKey(selfFillElement))

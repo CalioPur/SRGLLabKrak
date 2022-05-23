@@ -18,6 +18,16 @@ public class Protocole
     //Nb d'objectifs effectués (<= nb objectifs dans la liste)
     public int objectivesCounter =0;
 
+    //************************************************************
+    //variables pour detection des erreurs
+
+    //events -> pour activation popup
+    public delegate void ErrorDetected(string message);
+    public static event ErrorDetected OnErrorDetectedEvent;
+
+    //liste des erreurs + le nombre de fois qu'elles ont été faites
+    public Dictionary<Error, int> dictionaryOfErrors = new Dictionary<Error, int>();
+
 
     //Regarde si l'action effectuée est l'objectif à faire
     //Si oui, update du dictionnaire + incrementation compteur
@@ -48,8 +58,28 @@ public class Protocole
         }
     }
 
-    
+    //******************************************************************************
+    //Fonction pour detection des erreurs 
 
-    //AJOUTER SUBSCRIBE FUNCTION POUR OBJETS ?
+    public void checkIfErrorWasDone(Error error)
+    {
+        if (error.EvaluateError(error))
+        {
+            if (dictionaryOfErrors.ContainsKey(error))
+            {
+                dictionaryOfErrors[error] += 1;
+            }
+            else
+            {
+                dictionaryOfErrors.Add(error, 1);
+            }
+
+            if (OnErrorDetectedEvent != null)
+            {
+                OnErrorDetectedEvent(error.ErrorMessage());
+            }
+        }
+        
+    }
 
 }
