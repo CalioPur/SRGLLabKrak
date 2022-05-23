@@ -9,10 +9,10 @@ TagManager:
   - becher
   - pipetteA
   - Spin
-  - Poudre_Test
-  - Fiole_Test
   - erlenmeyer
   - pissette
+  - holder
+  - container
   layers:
   - Default
   - TransparentFX

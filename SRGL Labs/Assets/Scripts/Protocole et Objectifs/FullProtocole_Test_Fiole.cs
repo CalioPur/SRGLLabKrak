@@ -2,20 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FullProtocole_Test_Fiole : MonoBehaviour
+public class FullProtocole_Test_Fiole : Container
 {
     public delegate void ObjectHadSomethingHappen(Objective obj);
     public static event ObjectHadSomethingHappen ObjectHadSomethingHappenEvent;
 
-    public delegate void ObjectIsGrabbed(GameObject gObj);
-    public static event ObjectIsGrabbed ObjectIsGrabbedEvent;
-    public static event ObjectIsGrabbed ObjectIsDroppedEvent;
-
-    Dictionary<string,int> dictionaryOfContainedElements = new Dictionary<string,int>();
+    Dictionary<string, int> dictionaryOfContainedElements = new Dictionary<string, int>();
 
     public GameObject testLiquid;
-
-    public bool isGrabbed = false;
 
     private void Start()
     {
@@ -28,43 +22,8 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
     //mouse button 3 -> empty bottle ?
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.name.Equals(this.name))
-            {
-                Debug.Log("Held");
-                isGrabbed = !isGrabbed;
-                //ObjectGotGrabbed();
-            }
-                
-        }
-        else if(Input.GetMouseButtonDown(1))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.name.Equals(this.name))
-            {
-                if (this.dictionaryOfContainedElements.ContainsKey("eau distillée"))
-                {
 
-                    this.dictionaryOfContainedElements["eau distillée"] += 25;
-                    Debug.Log("+25");
-                }
-                else
-                {
-                    this.dictionaryOfContainedElements.Add("eau distillée", 25);
-                    Debug.Log("+25 (set)");
-                }
-                ObjectWasFilled();
-                testLiquid.SetActive(true);
-            }
-
-            
-        }
-        else if (Input.GetMouseButtonDown(2))
+        if (Input.GetMouseButtonDown(2))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -75,13 +34,14 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
                 testLiquid.SetActive(false);
                 Debug.Log("Cleared");
             }
-                
+
         }
     }
 
-    void ObjectWasFilled()
+
+    public override void ObjectWasFilled()
     {
-        ObjectiveContainsDictionary objcd = new ObjectiveContainsDictionary(this.dictionaryOfContainedElements,1) ;
+        ObjectiveContainsDictionary objcd = new ObjectiveContainsDictionary(this.dictionaryOfContainedElements, 1);
         if (ObjectHadSomethingHappenEvent != null)
         {
             ObjectHadSomethingHappenEvent(objcd);
@@ -90,21 +50,56 @@ public class FullProtocole_Test_Fiole : MonoBehaviour
 
     }
 
-    void ObjectGotGrabbed()
+    //Ajoute un élément et sa quantité dans le dictionnaire puis appelle objectwasfilled
+    public override void AddElement(Dictionary<string, int> elementDictionary)
+    {
+        foreach (KeyValuePair<string, int> pair in elementDictionary)
+        {
+            if (this.dictionaryOfContainedElements.Count != 0 && this.dictionaryOfContainedElements.ContainsKey(pair.Key))
+            {
+                this.dictionaryOfContainedElements[pair.Key] += pair.Value;
+            }
+            else
+            {
+                this.dictionaryOfContainedElements.Add(pair.Key, pair.Value);
+            }
+        }
+
+        ObjectWasFilled();
+
+    }
+
+    public override void ObjectGotGrabbed()
     {
         ObjectiveGrabItem objgi = new ObjectiveGrabItem(this.tag);
         if (ObjectHadSomethingHappenEvent != null)
         {
             ObjectHadSomethingHappenEvent(objgi);
         }
-        if (ObjectIsGrabbedEvent != null && isGrabbed)
-        {
-            ObjectIsGrabbedEvent(this.transform.gameObject);
-        }
-        else if (ObjectIsDroppedEvent != null && !isGrabbed)
-        {
-            ObjectIsDroppedEvent(this.transform.gameObject);
 
+    }
+
+    public override void SelfFill()
+    {
+        if (this.dictionaryOfContainedElements.ContainsKey("eau distillée"))
+        {
+
+            this.dictionaryOfContainedElements["eau distillée"] += 25;
+            Debug.Log("+25");
         }
+        else
+        {
+            this.dictionaryOfContainedElements.Add("eau distillée", 25);
+            Debug.Log("+25 (set)");
+        }
+        ObjectWasFilled();
+
+        testLiquid.SetActive(true);
+    }
+
+    public override void ClearObject()
+    {
+        this.dictionaryOfContainedElements.Clear();
+        testLiquid.SetActive(false);
     }
 }

@@ -22,7 +22,7 @@ public class ObjectiveContainsDictionary : Objective
             ObjectiveContainsDictionary temp = (ObjectiveContainsDictionary)obj;
             if(temp.typeOfContains == 1)
             {
-                return typeOfContainsOne(temp);
+                return TypeOfContainsOne(temp);
             }
             else
             {
@@ -38,7 +38,7 @@ public class ObjectiveContainsDictionary : Objective
     }
 
     //Type strict
-    public bool typeOfContainsOne(ObjectiveContainsDictionary temp)
+    public bool TypeOfContainsOne(ObjectiveContainsDictionary temp)
     {
         bool flag = temp.dictionaryOfElementsAndQuantityRequired.Count == this.dictionaryOfElementsAndQuantityRequired.Count;
         if (flag)

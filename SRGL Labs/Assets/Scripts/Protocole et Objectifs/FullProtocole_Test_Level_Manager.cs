@@ -5,36 +5,39 @@ using UnityEngine.UI;
 
 public class FullProtocole_Test_Level_Manager : MonoBehaviour
 {
+
+    public AnimationCurve animationCurve;
+
+    bool mouseEnabled = true;
+    public float animationDuration;
+
     private Protocole protocole = new Protocole();
 
     //Liste des toggles (ordonnés en fonction des objectifs)
     public List<GameObject> toggleList;
 
-    public GameObject isHolding =null;
+    public GameObject isHolding = null;
     public Vector3 positionBeforeHeld;
+
+    public GameObject myHand;
 
     private void OnEnable()
     {
-        FullProtocole_Test_Fiole.ObjectHadSomethingHappenEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
-        FullProtocole_Test_Poudre.ObjectHadSomethingHappenEventPoudre += this.protocole.checkIfOrderedObjectiveIsValidated;
-        FullProtocole_Test_Poudre.ObjectIsDroppedEvent += this.DropObject;
-        FullProtocole_Test_Poudre.ObjectIsGrabbedEvent += this.HoldObject;
-        FullProtocole_Test_Fiole.ObjectIsDroppedEvent += this.DropObject;
-        FullProtocole_Test_Fiole.ObjectIsGrabbedEvent += this.HoldObject;
-        Protocole.OnObjectiveSuccessfullyCompletedEvent += toggleUpdate;
+        ContainerSimple.ObjectHadSomethingHappenEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
+        HolderSimple.ObjectHadSomethingHappenEvent += this.protocole.checkIfOrderedObjectiveIsValidated;
+        Protocole.OnObjectiveSuccessfullyCompletedEvent += ToggleUpdate;
     }
 
-    void toggleUpdate()
+    void ToggleUpdate()
     {
-        //print(this.protocole.objectivesCounter);
         toggleList[this.protocole.objectivesCounter].GetComponent<Toggle>().isOn = true;
     }
 
     private void Start()
     {
-        Dictionary<string,int> d1 = new Dictionary<string, int>();
+        Dictionary<string, int> d1 = new Dictionary<string, int>();
         d1.Add("eau distillée", 100);
-        ObjectiveContainsDictionary obj1 = new ObjectiveContainsDictionary(d1,1) ;
+        ObjectiveContainsDictionary obj1 = new ObjectiveContainsDictionary(d1, 1);
         this.protocole.listOfObjectives.Add(obj1);
         this.protocole.dictionaryOfObjectives.Add(obj1, false);
 
@@ -46,28 +49,41 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         this.protocole.dictionaryOfObjectives.Add(obj2, false);
 
         //test contains strict sur fiole (poudre)
-        d1.Add("poudre", 25);
-        ObjectiveContainsDictionary obj3 = new ObjectiveContainsDictionary(d1, 1);
+        Dictionary<string, int> d3 = new Dictionary<string, int>();
+        d3.Add("eau distillée", 100);
+        d3.Add("poudre", 25);
+        ObjectiveContainsDictionary obj3 = new ObjectiveContainsDictionary(d3, 1);
         this.protocole.listOfObjectives.Add(obj3);
         this.protocole.dictionaryOfObjectives.Add(obj3, false);
 
         //test contains strict sur fiole (eau)
-        d1["eau distillée"]+=50;
-        ObjectiveContainsDictionary obj4 = new ObjectiveContainsDictionary(d1, 1);
+        Dictionary<string, int> d4 = new Dictionary<string, int>();
+        d4.Add("eau distillée", 150);
+        d4.Add("poudre", 25);
+        ObjectiveContainsDictionary obj4 = new ObjectiveContainsDictionary(d4, 1);
         this.protocole.listOfObjectives.Add(obj4);
         this.protocole.dictionaryOfObjectives.Add(obj4, false);
 
         //?
+        ObjectiveGrabItem obj5 = new ObjectiveGrabItem("Fiole");
+        this.protocole.listOfObjectives.Add(obj5);
+        this.protocole.dictionaryOfObjectives.Add(obj5, false);
 
         //test contains fiole strict (acide)
-        d1.Add("acide", 25);
-        ObjectiveContainsDictionary obj6 = new ObjectiveContainsDictionary(d1, 1);
+        Dictionary<string, int> d5 = new Dictionary<string, int>();
+        d5.Add("eau distillée", 150);
+        d5.Add("poudre", 25);
+        d5.Add("acide", 25);
+        ObjectiveContainsDictionary obj6 = new ObjectiveContainsDictionary(d5, 1);
         this.protocole.listOfObjectives.Add(obj6);
         this.protocole.dictionaryOfObjectives.Add(obj6, false);
 
         //
-        d1["eau distillée"] += 350;
-        ObjectiveContainsDictionary obj7 = new ObjectiveContainsDictionary(d1, 1);
+        Dictionary<string, int> d6 = new Dictionary<string, int>();
+        d6.Add("eau distillée", 500);
+        d6.Add("poudre", 25);
+        d6.Add("acide", 25);
+        ObjectiveContainsDictionary obj7 = new ObjectiveContainsDictionary(d6, 1);
         this.protocole.listOfObjectives.Add(obj7);
         this.protocole.dictionaryOfObjectives.Add(obj7, false);
 
@@ -75,28 +91,163 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        // ******* GRAB / PUT / DROP - prend un element, verse le contenu de l'objet tenu dans celui cliqué ou lache un element
+        if (Input.GetMouseButtonDown(0) && mouseEnabled)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit) && this.isHolding == null) //rien en main
+            {
+                GameObject obj = hit.transform.gameObject;
+                HoldObject(obj);
+
+            }
+            else if (Physics.Raycast(ray, out hit) && this.isHolding != null) //avec qq chose en main
+            {
+                GameObject obj = hit.transform.gameObject;
+                if (obj.name.Equals(isHolding.name)) //clique sur le meme objet
+                {
+                    DropObject();
+                }
+                else //pas le meme objet
+                {
+                    if (this.isHolding.CompareTag("container") && obj.CompareTag("container"))
+                    {
+                        obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                    }
+                    else if (this.isHolding.CompareTag("holder") && obj.CompareTag("container"))
+                    {
+                        obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements);
+                    }
+                    else if (this.isHolding.CompareTag("container") && obj.CompareTag("scale"))
+                    {
+                        obj.GetComponent<FullProtocole_Test_Scale>().WeighObject(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                    }
+                }
+            }
+        }
+
+        // ******* FILL - remplissage d'un element 
+        else if (Input.GetMouseButtonDown(1) && mouseEnabled)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject obj = hit.transform.gameObject;
+                if (obj.CompareTag("container"))
+                {
+                    obj.GetComponent<Container>().SelfFill();
+                }
+                else if (obj.CompareTag("holder"))
+                {
+                    obj.GetComponent<HolderSimple>().SelfFill();
+                }
+            }
+
+        }
+        // ******* CLEAR - vide le contenu de l'element
+        else if (Input.GetMouseButtonDown(2) && mouseEnabled)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject obj = hit.transform.gameObject;
+                if (obj.CompareTag("container"))
+                {
+                    obj.GetComponent<Container>().ClearObject();
+                }
+                else if (obj.CompareTag("holder"))
+                {
+                    obj.GetComponent<HolderSimple>().ClearObject();
+                }
+            }
+        }
+    }
+
     void HoldObject(GameObject gObj)
     {
-        if (this.isHolding == null)
+        StopAllCoroutines();
+        if (gObj.CompareTag("container"))
         {
             this.isHolding = gObj;
             this.positionBeforeHeld = gObj.transform.position;
-            gObj.transform.position = this.transform.position;
+            StartCoroutine(SmoothPos(gObj, gObj.transform.position, myHand.transform.position));
+            gObj.transform.position = myHand.transform.position;
+            gObj.GetComponent<Container>().ObjectGotGrabbed();
         }
-        
-    }
-
-    void DropObject(GameObject gObj)
-    {
-        if (this.isHolding != null)
+        else if (gObj.CompareTag("holder"))
         {
-            this.isHolding.transform.position = positionBeforeHeld;
-            this.isHolding = null;
+            this.isHolding = gObj;
+            this.positionBeforeHeld = gObj.transform.position;
+            StartCoroutine(SmoothPos(gObj, gObj.transform.position, myHand.transform.position));
+            gObj.transform.position = myHand.transform.position;
+            gObj.GetComponent<HolderSimple>().ObjectGotGrabbed();
         }
-        
-        
     }
 
+    void DropObject()
+    {
+        StopAllCoroutines();
+        StartCoroutine(SmoothPos(this.isHolding, this.isHolding.transform.position, positionBeforeHeld));
+        this.isHolding.transform.position = positionBeforeHeld;
+        this.isHolding = null;
+
+    }
 
     //add loop to set all toggle labels from text file + set all toggles to isOn= false + interactable off
+
+    //******************************************************************************************************
+
+    public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //animation de deplacement base
+    {
+        mouseEnabled = false;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        mouseEnabled = true;
+    }
+    public IEnumerator SmoothRotX(GameObject targetToMove, float a, float b) //animation de rotation base
+    {
+        mouseEnabled = false;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.rotation = new Quaternion(Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.y, targetToMove.transform.rotation.z, targetToMove.transform.rotation.w);
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+            print(currentTimePercentage);
+        }
+        mouseEnabled = true;
+    }
+    public IEnumerator SmoothPos2times(GameObject targetToMove, Vector3 a, Vector3 b, Vector3 c) //animation de 2 deplacements
+    {
+        mouseEnabled = false;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        startTime = Time.realtimeSinceStartup;
+        currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.position = Vector3.Lerp(b, c, animationCurve.Evaluate(currentTimePercentage));
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
+        }
+        mouseEnabled = true;
+    }
 }

@@ -6,12 +6,12 @@ public class ObjectiveGrabItem : Objective
 {
     //Tag de l'objet que l'on veut
     //On pourra modifier plus tard pour un systeme plus complexe
-    string tagOfObject;
+    string tagOrNameOfObject;
 
     //Constructeur
-    public ObjectiveGrabItem(string tag) 
+    public ObjectiveGrabItem(string tagOrName)
     {
-        this.tagOfObject = tag;
+        this.tagOrNameOfObject = tagOrName;
     }
 
     public override bool Evaluate(Objective obj)
@@ -19,7 +19,7 @@ public class ObjectiveGrabItem : Objective
         if (obj.GetType() == typeof(ObjectiveGrabItem))
         {
             ObjectiveGrabItem temp = (ObjectiveGrabItem)obj;
-            return temp.tagOfObject.Equals(this.tagOfObject);
+            return temp.tagOrNameOfObject.Equals(this.tagOrNameOfObject);
         }
         else
         {
@@ -27,5 +27,5 @@ public class ObjectiveGrabItem : Objective
         }
     }
 
- 
+
 }

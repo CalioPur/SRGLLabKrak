@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class FullProtocole_Test_Scale : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    //CHANGE TO FLOATS
+    public TMP_Text scaleDisplay;
+    public void WeighObject(Dictionary<string, int> dictionaryOfElements)
     {
-        
-    }
+        int total = 0;
+        foreach (KeyValuePair<string, int> pair in dictionaryOfElements)
+        {
+            total += pair.Value;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        scaleDisplay.text = total + " g";
     }
 }
