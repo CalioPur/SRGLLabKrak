@@ -4,43 +4,42 @@ using UnityEngine;
 
 public class ObjectiveContains : Objective
 {
-    //liste de couples (élément,quantité) que l'on veut / que l'on a
-    List<(string,int)> listOfElementsAndQuantityRequired;
+    public string container;
+    public Dictionary<string, int> dictionaryOfElementsAndQuantityRequired;
+    public bool wasMixed;
+    public int order;
 
-    //Constructeur
-    public ObjectiveContains(List<(string,int)> list)
+    public ObjectiveContains(string name, Dictionary<string, int> dictionary, bool mix, int nb)
     {
-        this.listOfElementsAndQuantityRequired = list;
+        this.dictionaryOfElementsAndQuantityRequired = dictionary;
+        this.container = name;
+        this.wasMixed = mix;
+        this.order = nb;
     }
 
-    //Verification du type de l'objectif reçu puis verification des elements de la liste de l'objectif reçu
-    //Note : verifie que tous les elements voulus sont dans l'objet- pas de verification si il y a un/des éléments en trop dans l'objet
     public override bool Evaluate(Objective obj)
     {
-        if(obj.GetType() == typeof(ObjectiveContains))
-        {
-            ObjectiveContains temp = (ObjectiveContains)obj;
-            bool flag = true;
+        //add ignore a specific element if needed
 
-            for (int k = 0; k < this.listOfElementsAndQuantityRequired.Count; k++)
+        //verification du dictionnaire (stricte)
+        ObjectiveContains temp = (ObjectiveContains)obj;
+
+        bool flag = temp.dictionaryOfElementsAndQuantityRequired.Count == this.dictionaryOfElementsAndQuantityRequired.Count;
+
+        if (flag)
+        {
+            foreach (KeyValuePair<string, int> pair in this.dictionaryOfElementsAndQuantityRequired)
             {
-                if (!temp.listOfElementsAndQuantityRequired.Contains(this.listOfElementsAndQuantityRequired[k]))
+
+                if (!(temp.dictionaryOfElementsAndQuantityRequired.ContainsKey(pair.Key)) || !(temp.dictionaryOfElementsAndQuantityRequired[pair.Key] == pair.Value))
                 {
                     flag = false;
                     break;
                 }
             }
+        }
 
-            return flag;
-            
-            
-        }
-        else
-        {
-            return false;
-        }
-        
+        //verification du reste
+        return flag && this.container.Equals(temp.container) && this.wasMixed==temp.wasMixed;
     }
-
-
 }
