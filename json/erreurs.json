@@ -1,0 +1,77 @@
+{
+    "hold" : [
+        {
+            "danger": 2,
+            "gloves" : false, 
+            "cap" : false
+        },
+        {
+            "danger": 2,
+            "gloves" : true, 
+            "cap" : false
+        },
+        {
+            "danger": 2,
+            "gloves" : false, 
+            "cap" : true
+        },
+        {
+            "danger": 1,
+            "gloves" : false, 
+            "cap" : null
+        }
+
+    ],
+    "fill" : [
+        {
+            "container" : "$",
+            "in" : "Acide",
+            "new": "Eau",
+            "place" : -1,
+            "maxFill" : -1,
+            "mix" : null
+        },
+        {
+            "Container" :"fiole",
+            "in" :"$",
+            "new" : "$",
+            "place" : -1,
+            "maxFill" : 70,
+            "mix" : false
+
+        }
+    ],
+    "take" :  [
+        {
+            "container" : "flacon",
+            "tools": "$",
+            "content" : "$",
+            "maxFill" : -1,
+            "place" : -1 
+
+        }
+    ],
+    "takeOffCap" : [
+        {
+            "Danger" : 2,
+            "place" : 0
+        },
+        {
+            "Danger" : 2,
+            "place" : 1
+        },
+        {
+            "Danger" : 2,
+            "place" : 2
+        }
+    ],
+    "empty" : [
+        {
+            "Danger": 2,
+            "trashCan" : "evier"
+        }
+    ]
+
+
+    
+}
