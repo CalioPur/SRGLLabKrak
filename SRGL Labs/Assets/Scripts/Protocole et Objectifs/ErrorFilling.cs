@@ -8,14 +8,27 @@ using System;
 public class ErrorFilling : Error
 {
     //not used yet
-    string message;
+    public string message;
 
     public string container;
+    //what is already in
     public string pouredIn;
+    //new added thing
     public string newElement;
     public int place;
     public int maxFill;
     public bool? mix;
+
+    public ErrorFilling(string m, string c, string pr, string n, int p, int mx, bool mi)
+    {
+        this.message = m;
+        this.container = c;
+        this.pouredIn = pr;
+        this.newElement = n;
+        this.maxFill = mx;
+        this.place = p;
+        this.mix = mi;
+    }
 
     public override string ErrorMessage()
     {

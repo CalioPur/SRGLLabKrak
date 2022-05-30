@@ -8,10 +8,17 @@ using System;
 public class ErrorLid : Error
 {
     //not used yet
-    string message;
+    public string message;
 
     public int danger;
     public int place;
+
+    public ErrorLid(string m, int d, int p)
+    {
+        this.message = m;
+        this.danger = d;
+        this.place = p;
+    }
 
     public override string ErrorMessage()
     {
@@ -20,7 +27,33 @@ public class ErrorLid : Error
 
     public override bool EvaluateError(Error error)
     {
-        throw new System.NotImplementedException();
+        if (error.GetType() == typeof(ErrorLid))
+        {
+            ErrorLid temp = (ErrorLid)error;
+            bool flag = true;
+            if (this.danger != -1)
+            {
+                flag = flag && temp.danger > this.danger;
+            }
+            if (this.place != -1)
+            {
+                if (this.place == 1)
+                {
+                    flag = flag && this.place == temp.place;
+                }
+                else
+                {
+                    flag = flag && temp.place >= this.place;
+                }
+
+            }
+
+            return flag;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

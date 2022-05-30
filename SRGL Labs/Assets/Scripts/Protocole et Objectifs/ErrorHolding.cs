@@ -8,7 +8,7 @@ using System;
 public class ErrorHolding : Error
 {
     //not used yet
-    string message;
+    public string message;
 
     //danger
     public int danger;
@@ -19,8 +19,9 @@ public class ErrorHolding : Error
 
     //bool? est un nullable bool
 
-    public ErrorHolding(int d, bool g, bool l)
+    public ErrorHolding(string m, int d, bool g, bool l)
     {
+        this.message = m;
         this.danger = d;
         this.gloves = g;
         this.cap = l;
@@ -38,8 +39,22 @@ public class ErrorHolding : Error
         if (error.GetType() == typeof(ErrorHolding))
         {
             ErrorHolding temp = (ErrorHolding)error;
+            bool flag = true;
 
-            return false; // remove later
+            if (this.danger != -1)
+            {
+                flag = flag && temp.danger > this.danger;
+            }
+            if(this.gloves != null)
+            {
+                flag = flag && this.gloves == temp.gloves;
+            }
+            if(this.cap != null)
+            {
+                flag = flag && this.cap == temp.cap;
+            }
+
+            return flag;
         }
         else
         {
