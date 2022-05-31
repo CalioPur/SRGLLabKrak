@@ -34,7 +34,6 @@ public class Protocole
     //Seulement pour objectifs ordonnés
     public void checkIfOrderedObjectiveIsValidated(Objective obj)
     {
-        
         //Debug.Log(objectivesCounter);
         //Debug.Log(listOfObjectives[objectivesCounter].Evaluate(obj));
         //Enlever premiere condition dans premier if si terminer le protocole empeche les interactions plus tard qui causent des index out of range
@@ -80,6 +79,17 @@ public class Protocole
             }
         }
         
+    }
+
+    //****************************************************************************
+
+    //-> deserialisation du fichier json contenant les etapes du protocole
+
+    public Objective DeserializeJSONProtocole()
+    {
+        string str = "{\"dictionaryOfElementsAndQuantityRequired\":{\"poudre\" : 20 }}"; /*"{\"tagOrNameOfObject\" : \"Fiole\"}";*/
+        //Debug.Log(str);
+        return Newtonsoft.Json.JsonConvert.DeserializeObject<ObjectiveContainsDictionary>(str);
     }
 
 }

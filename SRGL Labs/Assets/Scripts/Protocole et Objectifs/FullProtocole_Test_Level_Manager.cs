@@ -40,7 +40,13 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     private void Start()
     {
-        Dictionary<string, int> d1 = new Dictionary<string, int>();
+        this.protocole.listOfObjectives.Add(this.protocole.DeserializeJSONProtocole());
+        this.protocole.dictionaryOfObjectives.Add(this.protocole.DeserializeJSONProtocole(),false);
+
+
+        //this.protocole.DeserializeJSONProtocole(); 
+
+        /*Dictionary<string, int> d1 = new Dictionary<string, int>();
         d1.Add("eau distillée", 100);
         ObjectiveContainsDictionary obj1 = new ObjectiveContainsDictionary(d1, 1);
         this.protocole.listOfObjectives.Add(obj1);
@@ -92,9 +98,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         this.protocole.listOfObjectives.Add(obj7);
         this.protocole.dictionaryOfObjectives.Add(obj7, false);
 
-        //end protocole
+        //end protocole*/
 
-     
+
     }
 
     //*******************************************GET RID OF HOLDERS ?
@@ -128,13 +134,13 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
                         //**************************** changer par fonction qui prend en charge la creation de toutes les erreurs ??
                         //**************************** code pour verif si container simple ou autre ?
                         //**************************** faire classe container generale (pas container puis container simple et autre) ??
-                        setAndCheckFillErrors(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                        SetAndCheckFillErrors(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
 
                         obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
                     }
                     else if (this.isHolding.CompareTag("holder") && obj.CompareTag("container"))
                     {
-                        setAndCheckFillErrors(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                        SetAndCheckFillErrors(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
 
                         obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements);
                     }
@@ -232,7 +238,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     //creation des erreurs à verifier + regarde si erreurs ou non
     //AJOUTER AUTRES PARAMETRES SI NECESSAIRE
-    void setAndCheckFillErrors(Dictionary<string,int> pouredIn, Dictionary<string, int> alreadyIn)
+    void SetAndCheckFillErrors(Dictionary<string,int> pouredIn, Dictionary<string, int> alreadyIn)
     {
         ErrorWaterInAcid er1 = new ErrorWaterInAcid(pouredIn,alreadyIn);
         protocole.checkIfErrorWasDone(er1);

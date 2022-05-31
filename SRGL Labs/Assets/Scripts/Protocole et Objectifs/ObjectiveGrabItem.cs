@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
+[Serializable]
 public class ObjectiveGrabItem : Objective
 {
     //Tag de l'objet que l'on veut
     //On pourra modifier plus tard pour un systeme plus complexe
-    string tagOrNameOfObject;
+    public string tagOrNameOfObject;
 
     //Constructeur
     public ObjectiveGrabItem(string tagOrName)
@@ -16,6 +18,7 @@ public class ObjectiveGrabItem : Objective
 
     public override bool Evaluate(Objective obj)
     {
+        
         if (obj.GetType() == typeof(ObjectiveGrabItem))
         {
             ObjectiveGrabItem temp = (ObjectiveGrabItem)obj;

@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
+[Serializable]
 public class ObjectiveContainsDictionary : Objective
 {
-    Dictionary<string, int> dictionaryOfElementsAndQuantityRequired;
+    public Dictionary<string, int> dictionaryOfElementsAndQuantityRequired;
     //indique si objectif strict ou non (ou autre)
-    int typeOfContains;
+    public int typeOfContains;
 
     //Constructeur
     public ObjectiveContainsDictionary(Dictionary<string, int> dictionary, int type)
