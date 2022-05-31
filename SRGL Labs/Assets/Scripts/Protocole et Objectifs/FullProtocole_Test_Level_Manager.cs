@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class FullProtocole_Test_Level_Manager : MonoBehaviour
 {
+    //json error file
+    public TextAsset jsonErrorFile;
 
     public AnimationCurve animationCurve;
 
@@ -22,6 +24,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
     public Vector3 positionBeforeHeld;
 
     public GameObject myHand;
+
+    //********************TEMPORARY ?
+    ErrorManager allPossibleErrors;
 
     private void OnEnable()
     {
@@ -42,6 +47,8 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
     {
         this.protocole.listOfObjectives.Add(this.protocole.DeserializeJSONProtocole());
         this.protocole.dictionaryOfObjectives.Add(this.protocole.DeserializeJSONProtocole(),false);
+
+        this.allPossibleErrors = this.protocole.DeserializeJSONErrors(jsonErrorFile);
 
 
         //this.protocole.DeserializeJSONProtocole(); 
@@ -104,7 +111,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
     }
 
     //*******************************************GET RID OF HOLDERS ?
-
+    //drop object will have to be updated when placeholders will be added
     private void Update()
     {
         // ******* GRAB / PUT / DROP - prend un element, verse le contenu de l'objet tenu dans celui cliqué ou lache un element
@@ -134,13 +141,16 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
                         //**************************** changer par fonction qui prend en charge la creation de toutes les erreurs ??
                         //**************************** code pour verif si container simple ou autre ?
                         //**************************** faire classe container generale (pas container puis container simple et autre) ??
-                        SetAndCheckFillErrors(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
-
-                        obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                        if(SetAndCheckFillErrors(this.isHolding, obj))
+                        {
+                            //************ PREVENTS ACTION FROM BEING DONE IF ERROR
+                            obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                        }
+                        
                     }
                     else if (this.isHolding.CompareTag("holder") && obj.CompareTag("container"))
                     {
-                        SetAndCheckFillErrors(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements, obj.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                        SetAndCheckFillErrors(this.isHolding,obj);
 
                         obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<HolderSimple>().dictionaryOfContainedElements);
                     }
@@ -216,7 +226,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         }
     }
 
-    //lacher un objet (retourne à sa position precedente 
+    //lacher un objet (retourne à sa position precedente)
     void DropObject()
     {
         StopAllCoroutines();
@@ -238,15 +248,43 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     //creation des erreurs à verifier + regarde si erreurs ou non
     //AJOUTER AUTRES PARAMETRES SI NECESSAIRE
-    void SetAndCheckFillErrors(Dictionary<string,int> pouredIn, Dictionary<string, int> alreadyIn)
+    bool SetAndCheckFillErrors(GameObject pouredIn, GameObject receiving)
     {
-        ErrorWaterInAcid er1 = new ErrorWaterInAcid(pouredIn,alreadyIn);
-        protocole.checkIfErrorWasDone(er1);
+        Dictionary<string, int> pouredDico = new Dictionary<string, int>();
+        ErrorFilling error;
+
+        if (pouredIn.CompareTag("holder"))
+        {
+            pouredDico = pouredIn.GetComponent<HolderSimple>().dictionaryOfContainedElements;
+        }
+        else if (pouredIn.CompareTag("container"))
+        {
+            pouredDico = pouredIn.GetComponent<ContainerSimple>().dictionaryOfContainedElements;
+        }
+        //change receiving.name by proper varaiable if names of objects in game arent correct
+        //two loops -> compare all elements of both what pours and what receives -> (there wont be extra elements in poured in- only one generally)
+        
+        foreach(KeyValuePair<string, int> pair in pouredDico)
+        {
+            foreach(KeyValuePair<string, int> pair2 in receiving.GetComponent<ContainerSimple>().dictionaryOfContainedElements)
+            {
+                error = new ErrorFilling(null, receiving.name,pair.Key,pair2.Key,0,1,10,false);
+                if(protocole.checkIfErrorWasDoneFill(error, allPossibleErrors.fill))
+                {
+                    return false;
+                }
+                
+            }
+        }
+        return true;
+        //ErrorWaterInAcid er1 = new ErrorWaterInAcid(pouredIn,alreadyIn);
+        
     }
 
     //add loop to set all toggle labels from text file + set all toggles to isOn= false + interactable off
 
     //******************************************************************************************************
+    //UPDATE WITH LEAN TWEEN ???
 
     public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //animation de deplacement base
     {

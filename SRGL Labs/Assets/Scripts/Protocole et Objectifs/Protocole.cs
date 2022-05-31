@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Protocole
 {
+    
     //Events -> notification pour les toggles 
     public delegate void ObjectiveSuccessfullyCompleted();
     public static event ObjectiveSuccessfullyCompleted OnObjectiveSuccessfullyCompletedEvent;
@@ -60,26 +61,33 @@ public class Protocole
     //******************************************************************************
     //Fonction pour detection des erreurs 
 
-    public void checkIfErrorWasDone(Error error)
+    public bool checkIfErrorWasDoneFill(Error error, List<ErrorFilling> listOfErrors)
     {
-        if (error.EvaluateError(error))
+        bool flag = false;
+        foreach(ErrorFilling errorFilling in listOfErrors)
         {
-            if (dictionaryOfErrors.ContainsKey(error))
+            if (errorFilling.EvaluateError(error))
             {
-                dictionaryOfErrors[error] += 1;
-            }
-            else
-            {
-                dictionaryOfErrors.Add(error, 1);
-            }
+                if (dictionaryOfErrors.ContainsKey(errorFilling))
+                {
+                    dictionaryOfErrors[errorFilling] += 1;
+                }
+                else
+                {
+                    dictionaryOfErrors.Add(errorFilling, 1);
+                }
 
-            if (OnErrorDetectedEvent != null)
-            {
-                OnErrorDetectedEvent(error.ErrorMessage());
+                if (OnErrorDetectedEvent != null)
+                {
+                    OnErrorDetectedEvent(errorFilling.ErrorMessage());
+                }
+                flag = true;
             }
         }
-        
+        return flag;
     }
+
+
 
     //****************************************************************************
 
@@ -92,4 +100,9 @@ public class Protocole
         return Newtonsoft.Json.JsonConvert.DeserializeObject<ObjectiveContainsDictionary>(str);
     }
 
+    //-> deserialisation du fichier json contenant les erreurs possibles
+    public ErrorManager DeserializeJSONErrors(TextAsset json)
+    {
+        return Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorManager>(json.text);
+    }
 }

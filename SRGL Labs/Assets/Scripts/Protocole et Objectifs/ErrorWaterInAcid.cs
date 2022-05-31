@@ -21,6 +21,7 @@ public class ErrorWaterInAcid : Error
 
     //NE PREND EN COMPTE QUE SI ON VERSE SEULEMENT DE L'EAU DANS L'ACIDE (sans eau avec)
     //(eau avec ou sans autres éléments ?)
+    //acide ici changé par poudre pour test
     public override bool EvaluateError(Error error)
     {
         
@@ -28,7 +29,7 @@ public class ErrorWaterInAcid : Error
         {
             
             ErrorWaterInAcid temp = (ErrorWaterInAcid)error;
-            if (temp.elementsPouredIn.ContainsKey("eau distillée") && temp.elementsAlreadyPresent.ContainsKey("acide") && !temp.elementsAlreadyPresent.ContainsKey("eau distillée"))
+            if (temp.elementsPouredIn.ContainsKey("eau distillée") && temp.elementsAlreadyPresent.ContainsKey("poudre") && !temp.elementsAlreadyPresent.ContainsKey("eau distillée"))
             {
                 return true;
 

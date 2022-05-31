@@ -15,11 +15,12 @@ public class ErrorFilling : Error
     public string pouredIn;
     //new added thing
     public string newElement;
+    public int danger;
     public int place;
     public int maxFill;
     public bool? mix;
 
-    public ErrorFilling(string m, string c, string pr, string n, int p, int mx, bool mi)
+    public ErrorFilling(string m, string c, string pr, string n, int d, int p, int mx, bool mi)
     {
         this.message = m;
         this.container = c;
@@ -28,6 +29,7 @@ public class ErrorFilling : Error
         this.maxFill = mx;
         this.place = p;
         this.mix = mi;
+        this.danger = d;
     }
 
     public override string ErrorMessage()
@@ -73,6 +75,10 @@ public class ErrorFilling : Error
             if (this.maxFill != -1)
             {
                 flag = flag && this.maxFill > temp.maxFill;
+            }
+            if (this.danger != -1)
+            {
+                flag = flag && temp.danger == this.danger;
             }
 
             return flag;

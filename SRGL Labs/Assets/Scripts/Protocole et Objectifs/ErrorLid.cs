@@ -33,7 +33,7 @@ public class ErrorLid : Error
             bool flag = true;
             if (this.danger != -1)
             {
-                flag = flag && temp.danger > this.danger;
+                flag = flag && temp.danger == this.danger;
             }
             if (this.place != -1)
             {

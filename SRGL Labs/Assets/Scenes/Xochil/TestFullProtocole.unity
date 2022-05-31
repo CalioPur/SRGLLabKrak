@@ -2694,6 +2694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d48beec2bda40044a184757c7046009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jsonErrorFile: {fileID: 4900000, guid: 7073eba09106d8240bbba87f7a864dc2, type: 3}
   animationCurve:
     serializedVersion: 2
     m_Curve:

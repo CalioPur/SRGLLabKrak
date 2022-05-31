@@ -15,15 +15,18 @@ public class ErrorHolding : Error
     //gant
     public bool? gloves;
     //bouchon 
+    public bool? toxGlove;
+
     public bool? cap;
 
     //bool? est un nullable bool
 
-    public ErrorHolding(string m, int d, bool g, bool l)
+    public ErrorHolding(string m, int d, bool g, bool t, bool l)
     {
         this.message = m;
         this.danger = d;
         this.gloves = g;
+        this.toxGlove = t;
         this.cap = l;
     }
 
@@ -43,7 +46,7 @@ public class ErrorHolding : Error
 
             if (this.danger != -1)
             {
-                flag = flag && temp.danger > this.danger;
+                flag = flag && temp.danger == this.danger;
             }
             if(this.gloves != null)
             {
@@ -52,6 +55,10 @@ public class ErrorHolding : Error
             if(this.cap != null)
             {
                 flag = flag && this.cap == temp.cap;
+            }
+            if(this.toxGlove != null)
+            {
+                flag = flag && this.toxGlove == temp.toxGlove;
             }
 
             return flag;
