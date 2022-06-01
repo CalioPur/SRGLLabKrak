@@ -61,28 +61,32 @@ public class Protocole
     //******************************************************************************
     //Fonction pour detection des erreurs 
 
-    public bool checkIfErrorWasDoneFill(Error error, List<ErrorFilling> listOfErrors)
+    public bool checkIfErrorWasDoneFill(Error error, List<ErrorFilling> listOfErrors,int nbOfElements)
     {
         bool flag = false;
         foreach(ErrorFilling errorFilling in listOfErrors)
         {
-            if (errorFilling.EvaluateError(error))
+            if((!errorFilling.pouredIn.Equals("acide"))||(errorFilling.pouredIn.Equals("acide") && nbOfElements == 1))
             {
-                if (dictionaryOfErrors.ContainsKey(errorFilling))
+                if (errorFilling.EvaluateError(error))
                 {
-                    dictionaryOfErrors[errorFilling] += 1;
-                }
-                else
-                {
-                    dictionaryOfErrors.Add(errorFilling, 1);
-                }
+                    if (dictionaryOfErrors.ContainsKey(errorFilling))
+                    {
+                        dictionaryOfErrors[errorFilling] += 1;
+                    }
+                    else
+                    {
+                        dictionaryOfErrors.Add(errorFilling, 1);
+                    }
 
-                if (OnErrorDetectedEvent != null)
-                {
-                    OnErrorDetectedEvent(errorFilling.ErrorMessage());
+                    if (OnErrorDetectedEvent != null)
+                    {
+                        OnErrorDetectedEvent(errorFilling.ErrorMessage());
+                    }
+                    flag = true;
                 }
-                flag = true;
             }
+            
         }
         return flag;
     }

@@ -145,6 +145,7 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
                         {
                             //************ PREVENTS ACTION FROM BEING DONE IF ERROR
                             obj.GetComponent<Container>().AddElement(this.isHolding.GetComponent<ContainerSimple>().dictionaryOfContainedElements);
+                            //print("aaaaaaaaaaaaaaaaaaaaaaaaa");
                         }
                         
                     }
@@ -268,8 +269,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
         {
             foreach(KeyValuePair<string, int> pair2 in receiving.GetComponent<ContainerSimple>().dictionaryOfContainedElements)
             {
-                error = new ErrorFilling(null, receiving.name,pair.Key,pair2.Key,0,1,10,false);
-                if(protocole.checkIfErrorWasDoneFill(error, allPossibleErrors.fill))
+                //first is what is already in, then what is added
+                error = new ErrorFilling(null, receiving.name,pair2.Key,pair.Key,0,1,10,false);
+                if(protocole.checkIfErrorWasDoneFill(error, allPossibleErrors.fill, receiving.GetComponent<ContainerSimple>().dictionaryOfContainedElements.Count))
                 {
                     return false;
                 }

@@ -378,7 +378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   testLiquid: {fileID: 2100773341}
   selfFillQuantity: 5
-  selfFillElement: poudre
+  selfFillElement: acide
 --- !u!1 &160680644
 GameObject:
   m_ObjectHideFlags: 0
