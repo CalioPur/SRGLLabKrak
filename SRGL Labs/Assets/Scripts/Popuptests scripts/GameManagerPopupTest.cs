@@ -4,15 +4,43 @@ using UnityEngine;
 
 public class GameManagerPopupTest : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public int maxMessages = 10;
+
+    public GameObject textObject;
+
+    [SerializeField]
+    List<Message> messageList = new List<Message>();
+
+    
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0))
+        {
+            SendMessageHere("hello world !");
+        }
     }
+
+    public void SendMessageHere(string text)
+    {
+        if(messageList.Count >= maxMessages)
+        {
+            messageList.Remove(messageList[0]);
+        }
+        Message newMessage = new Message();
+        newMessage.text = text;
+
+        messageList.Add(newMessage);
+    }
+}
+
+[System.Serializable]
+public class Message
+{
+    public string text;
 }
