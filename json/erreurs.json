@@ -117,6 +117,17 @@
             "maxFill" : -1,
             "mix" : null
 
+        },
+        {
+            "message" : " Cet endroit n'est pas adapté a la manipulation de ce type de produit  ",
+            "container" :"$",
+            "pouredIn" :"$",
+            "newElement" : "$",
+            "danger" : 1,
+            "place" : 3,
+            "maxFill" : -1,
+            "mix" : null
+
         }
         
 
@@ -124,32 +135,86 @@
     ],
     "take" :  [
         {
+            "message" : "Il ne faut jamais prelever directement depuis le flacon ",
             "container" : "flacon",
             "tools": "$",
+            "used" : "$",
             "content" : "$",
             "maxFill" : -1,
             "place" : -1 
 
+        },
+        {
+            "message" : "Il ne faut jamais prelever directement depuis le flacon ",
+            "container" : "$",
+            "tools": "pipette pasteur",
+            "used" : "",
+            "content" : "$",
+            "maxFill" : -1,
+            "place" : -1 
         }
     ],
     "takeOffCap" : [
         {
+            "message": "Ce n'est pas un adapté pour enlever le bouchon de ce flacon ",
             "Danger" : 2,
             "place" : 0
         },
         {
+            "message": "Ce n'est pas un adapté pour enlever le bouchon de ce flacon ",
             "Danger" : 2,
             "place" : 1
         },
         {
+            "message": "Ce n'est pas un adapté pour enlever le bouchon de ce flacon ",
             "Danger" : 2,
             "place" : 2
         }
     ],
     "empty" : [
         {
+            "message" : "Tu ne peux pas jeter ça ici ",
+            "disposable" : true,
+            "ph": "$",
             "Danger": 2,
             "trashCan" : "evier"
+        },
+        {
+            "message" :"Tu ne peux pas jeter ça ici ",
+            "disposable" : true,
+            "ph" : "basique",
+            "Danger" : -1,
+            "trashCan" : "poubelle acide "
+        },
+        {
+            "message" :"Tu ne peux pas jeter ça ici ",
+            "disposable" : true,
+            "ph" : "acide",
+            "Danger" : -1,
+            "trashCan" : "poubelle basique "
+        },
+        {
+            "message" :"Cet objet n'est pas jetable ! ",
+            "disposable" : false,
+            "ph" : "$",
+            "Danger" : -1,
+            "trashCan" : "$"
+        }
+    ],
+    "put" : [
+        {
+            "message" : "tu ne peux pas poser ça ici ",
+            "danger" : -1,
+            "zone": "paillaisse",  
+            "place" : 0
+        }
+
+    ],
+    "mix" : [
+        {
+            "message" : "Avant de melanger la solution il faut fermer la fiole ",
+            "container" : "fiole",
+            "cap" : false
         }
     ]
 
