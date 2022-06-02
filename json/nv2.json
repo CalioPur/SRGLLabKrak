@@ -1,0 +1,10 @@
+{
+    "contains" : [
+        {
+            "container" : "fiole200",
+            "content" : {"hcl" : 20,"eau":180},
+            "melange" : true,
+            "numero" : 1
+        }
+    ]
+}
