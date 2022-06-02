@@ -36,7 +36,44 @@
             "content" :{"KMnO4":15.8,"eau":100},
             "melange" :true,
             "numero" :9
+        },
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5},
+            "melange" :false,
+            "numero" : 10
+        },
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5},
+            "melange" :false,
+            "numero" : 11
+        },
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5},
+            "melange" :false,
+            "numero" : 12
+        }, 
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5,"solA": 666},
+            "melange" :false,
+            "numero" : 13
+        },
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5,"solB": 666},
+            "melange" :false,
+            "numero" : 14
+        },
+        {
+            "container":"tube a essai",
+            "content" : {"ppAcide": 3.5,"solC": 666},
+            "melange" :false,
+            "numero" : 15
         }
+        
     ],
     "Put" : [
         {
