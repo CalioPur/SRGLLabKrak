@@ -1,0 +1,46 @@
+{
+    "contains": [
+        {
+            "container" : "coupelle",
+            "content" : {"NaoH" : 4},
+            "melange" : false,
+            "numero" : 1
+        },
+        {
+            "container" : "fiole100",
+            "content" : {"NaoH" : 4},
+            "melange" : false,
+            "numero" : 2
+        },
+        {
+            "container" : "fiole100",
+            "content" : {"NaoH" : 4,"eau":96},
+            "melange" : true,
+            "numero" : 3
+        },
+        {
+            "container" : "fiole50",
+            "content" : {"solNaoH" : 40,"eau": 10},
+            "melange" : true,
+            "numero" : 4
+        },
+        {
+            "container" : "fiole50",
+            "content" : {"solNaoH" : 25,"eau": 25},
+            "melange" : true,
+            "numero" : 5
+        },
+        {
+            "container" : "fiole50",
+            "content" : {"solNaoH" : 10,"eau": 50},
+            "melange" : true,
+            "numero" : 6
+        },
+        {
+            "container" : "fiole50",
+            "content" : {"solNaoH" : 5,"eau": 45},
+            "melange" : true,
+            "numero" : 7
+        }
+    ]
+}
