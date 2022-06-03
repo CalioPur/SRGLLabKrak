@@ -28,14 +28,21 @@ public class GameManagerPopupTest1 : MonoBehaviour
         {
             SendMessageHere("this is a very long text a bip bop wow aaaaaaaaaaaaaaaa aaaaaaaajdjdjbjzfjzfzjfeej mrrrrrrrrrrrrrrrheghvzejvghgvhzehvggrhvgej wowoowowowoowowowow huehrueh hsdhzuhehjhdhdh aaaaaaaaaaaaaaaaaaaa");
         }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            SendMessageHere("shimp");
+        }
     }
+
+    //(try object pooling later ?)
 
     public void SendMessageHere(string text)
     {
         if(messageList.Count >= maxMessages)
         {
-            //destroy object 
-            Destroy(messageList[0].panelInMessage.gameObject);
+            //destroy object
+            messageList[0].panelInMessage.GetComponent<CanvasGroup>().LeanAlpha(0, 0.2f);
+            Destroy(messageList[0].panelInMessage.gameObject,0.2f);
             messageList.Remove(messageList[0]);
         }
 
@@ -49,6 +56,11 @@ public class GameManagerPopupTest1 : MonoBehaviour
         newMessage.panelInMessage.GetComponentInChildren<TMP_Text>().text = newMessage.text;
 
         messageList.Add(newMessage);
+
+        //animation
+        newText.GetComponent<CanvasGroup>().alpha = 0;
+        newText.GetComponent<CanvasGroup>().LeanAlpha(1,0.5f);
+
     }
 }
 

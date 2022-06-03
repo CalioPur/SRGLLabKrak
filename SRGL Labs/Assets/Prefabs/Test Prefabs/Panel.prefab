@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 2165703160257204814}
   - component: {fileID: 4330663207034271768}
   - component: {fileID: 1928583608591239156}
+  - component: {fileID: 8383863241952146446}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -269,3 +270,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!225 &8383863241952146446
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6166321134743267454}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
