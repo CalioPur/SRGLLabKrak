@@ -10,10 +10,11 @@ public class GameManagerPopupTest1 : MonoBehaviour
 
     public GameObject chatPanel, panel;
 
+    public float maxTimeBeforeDeletion = 10f;
+
     [SerializeField]
     List<Message1> messageList = new List<Message1>();
 
-    //list of messages 
 
     
 
@@ -27,6 +28,7 @@ public class GameManagerPopupTest1 : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             SendMessageHere("this is a very long text a bip bop wow aaaaaaaaaaaaaaaa aaaaaaaajdjdjbjzfjzfzjfeej mrrrrrrrrrrrrrrrheghvzejvghgvhzehvggrhvgej wowoowowowoowowowow huehrueh hsdhzuhehjhdhdh aaaaaaaaaaaaaaaaaaaa");
+            DeleteMessage();
         }
         else if (Input.GetMouseButtonDown(1))
         {
@@ -38,30 +40,41 @@ public class GameManagerPopupTest1 : MonoBehaviour
 
     public void SendMessageHere(string text)
     {
-        if(messageList.Count >= maxMessages)
+        if(messageList.Count < maxMessages)
         {
-            //destroy object
-            messageList[0].panelInMessage.GetComponent<CanvasGroup>().LeanAlpha(0, 0.2f);
-            Destroy(messageList[0].panelInMessage.gameObject,0.2f);
-            messageList.Remove(messageList[0]);
+            Message1 newMessage = new Message1();
+            newMessage.text = text;
+
+            GameObject newText = Instantiate(panel, chatPanel.transform);
+
+            newMessage.panelInMessage = newText.gameObject;
+
+            newMessage.panelInMessage.GetComponentInChildren<TMP_Text>().text = newMessage.text;
+
+            messageList.Add(newMessage);
+
+            //animation
+
+            newText.GetComponent<CanvasGroup>().alpha = 0;
+            newText.GetComponent<CanvasGroup>().LeanAlpha(1, 0.5f);
+
+            StartCoroutine("DeleteMessage");
+            //code can pursue after coroutine called
         }
 
-        Message1 newMessage = new Message1();
-        newMessage.text = text;
-
-        GameObject newText = Instantiate(panel, chatPanel.transform);
-
-        newMessage.panelInMessage = newText.gameObject;
-
-        newMessage.panelInMessage.GetComponentInChildren<TMP_Text>().text = newMessage.text;
-
-        messageList.Add(newMessage);
-
-        //animation
-        newText.GetComponent<CanvasGroup>().alpha = 0;
-        newText.GetComponent<CanvasGroup>().LeanAlpha(1,0.5f);
 
     }
+
+    public IEnumerator DeleteMessage()
+    {
+        yield return new WaitForSeconds(maxTimeBeforeDeletion);
+        //after (set) seconds, destroy message
+        messageList[0].panelInMessage.GetComponent<CanvasGroup>().LeanAlpha(0, 0.2f);
+        Destroy(messageList[0].panelInMessage.gameObject, 0.2f);
+        messageList.Remove(messageList[0]);
+
+    }
+
 }
 
 [System.Serializable]
