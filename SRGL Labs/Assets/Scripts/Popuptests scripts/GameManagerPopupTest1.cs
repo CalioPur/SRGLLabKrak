@@ -6,6 +6,10 @@ using TMPro;
 
 public class GameManagerPopupTest1 : MonoBehaviour
 {
+
+    public delegate void PopupEvents();
+    public static event PopupEvents OnPopupOpensEvent;
+
     public int maxMessages = 10;
 
     public GameObject chatPanel, panel;
@@ -15,13 +19,6 @@ public class GameManagerPopupTest1 : MonoBehaviour
     [SerializeField]
     List<Message1> messageList = new List<Message1>();
 
-
-    
-
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
@@ -60,6 +57,10 @@ public class GameManagerPopupTest1 : MonoBehaviour
 
             StartCoroutine("DeleteMessage");
             //code can pursue after coroutine called
+            if (OnPopupOpensEvent != null)
+            {
+                OnPopupOpensEvent();
+            }
         }
 
 
