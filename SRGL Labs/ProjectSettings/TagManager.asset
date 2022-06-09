@@ -13,6 +13,7 @@ TagManager:
   - pissette
   - holder
   - container
+  - placeholder
   layers:
   - Default
   - TransparentFX
