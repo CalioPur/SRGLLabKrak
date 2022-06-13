@@ -1094,6 +1094,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handPlacement: {fileID: 2048684726}
+  weightGoal: 0
 --- !u!4 &741267618
 Transform:
   m_ObjectHideFlags: 0
@@ -1597,7 +1598,7 @@ GameObject:
   - component: {fileID: 1388723959}
   - component: {fileID: 1388723962}
   m_Layer: 0
-  m_Name: Placeholder 1
+  m_Name: Scale
   m_TagString: placeholder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1695,6 +1696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   place: 0
+  scaleText: {fileID: 282543595}
 --- !u!1 &1406476766
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,6 +1959,7 @@ MonoBehaviour:
   fill: 0
   pH: neutre
   hiddenPlaceholder: {fileID: 2053485793}
+  weight: 0
 --- !u!65 &1821134471
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2392,6 +2395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   place: 1
+  scaleText: {fileID: 0}
 --- !u!136 &2053485796
 CapsuleCollider:
   m_ObjectHideFlags: 0

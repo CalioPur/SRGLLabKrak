@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Placeholderscripttest : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class Placeholderscripttest : MonoBehaviour
     // zone
     public int place; // -> used to compare with place in erreurs.json
 
-
+    //pour balance
+    public TMP_Text scaleText;
 
 
 }

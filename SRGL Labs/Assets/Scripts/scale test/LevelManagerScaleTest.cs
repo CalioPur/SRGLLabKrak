@@ -101,6 +101,10 @@ public class LevelManagerScaleTest : MonoBehaviour
         if (target.CompareTag("container"))
         {
             target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.SetActive(true);
+            if (target.name.Equals("Scale")) //si placeholder de la balance
+            {
+                target.GetComponent<Placeholderscripttest>().scaleText.text = "0.00g";
+            }
         }
     }
 
@@ -113,6 +117,11 @@ public class LevelManagerScaleTest : MonoBehaviour
 
         this.objectHeld.LeanMove(target.transform.position, 0.5f).setEaseOutQuart();
         StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
+
+        if (target.name.Equals("Scale")) //si placeholder de la balance
+        {
+            target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}", objectHeld.GetComponent<ContainerObjectScript>().weight);
+        }
 
         this.objectHeld = null;
 
