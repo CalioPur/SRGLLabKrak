@@ -403,7 +403,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: -0.00002002716, z: 0.8520451, w: 0.9428616}
+  m_margin: {x: 0, y: -0.00002002716, z: 0.77109694, w: 0.9428616}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1094,7 +1094,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handPlacement: {fileID: 2048684726}
-  weightGoal: 0
+  weightGoal: 20
+  jsonErrorFile: {fileID: 4900000, guid: 245558a3018afd3468117b2427901d4b, type: 3}
 --- !u!4 &741267618
 Transform:
   m_ObjectHideFlags: 0
