@@ -22,8 +22,8 @@ public class ContainerObjectScript : MonoBehaviour
     //melange
     public bool wasMixed = false;
 
-    //fill (% ?) (taux de remplissage)
-    public float fill;
+    //fill (% ?) (taux de remplissage) -> float ?
+    public int fill;
 
     //contient
     public Dictionary<string, float> elementsContained;
@@ -58,7 +58,7 @@ public class ContainerObjectScript : MonoBehaviour
 
 
         //poids
-        if (weight == goal)
+        if (weight > goal)
         {
             weight += (weight / 2);
         }
@@ -70,7 +70,8 @@ public class ContainerObjectScript : MonoBehaviour
             }
             else
             {
-                weight += Random.Range((goal - weight), (goal - weight) * (1 / 5));
+                float temp = goal - weight;
+                weight += Random.Range((temp - temp*1/5), (temp + temp*1/5));
             }
             
         }
@@ -87,7 +88,7 @@ public class ContainerObjectScript : MonoBehaviour
 
         //poids
 
-        if (weight >= goal) 
+        if (weight < goal) 
         {
             weight -= (weight / 2);
         }
@@ -99,7 +100,8 @@ public class ContainerObjectScript : MonoBehaviour
             }
             else
             {
-                weight -= Random.Range((goal - weight), (goal - weight) * (1 / 5));
+                float temp = goal - weight;
+                weight -= Random.Range((temp - temp * 1 / 5), (temp + temp * 1 / 5));
             }
         }
 

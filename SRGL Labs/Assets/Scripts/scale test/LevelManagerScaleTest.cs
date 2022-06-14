@@ -26,14 +26,22 @@ public class LevelManagerScaleTest : MonoBehaviour
 
     //poids (temp)
     public float weightGoal;
-    
+
+    //erreurs
+    ErrorManager allPossibleErrors;
+
+    //protocole
+    private Protocole protocole = new Protocole();
+
+    //JSON
+    public TextAsset jsonErrorFile;
 
     //************************************************************* FONCTIONS
 
     void Start()
     {
         //Call json
-        weightGoal = 20;
+        allPossibleErrors = this.protocole.DeserializeJSONErrors(jsonErrorFile);
     }
 
     //MAIN
@@ -60,7 +68,7 @@ public class LevelManagerScaleTest : MonoBehaviour
                 {
                     if (!target.Equals(objectHeld)) //si target n'est pas l'objet tenu
                     {
-                        //check fill errors before filling -> prevents you from filling if error detected
+                        //check fill errors before filling -> prevents you from filling if error detected (within fill container)
                         FillContainer(target);
                     }
                     else //si target est l'objet tenu
@@ -101,9 +109,9 @@ public class LevelManagerScaleTest : MonoBehaviour
         if (target.CompareTag("container"))
         {
             target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.SetActive(true);
-            if (target.name.Equals("Scale")) //si placeholder de la balance
+            if (target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.name.Equals("Scale")) //si placeholder de la balance
             {
-                target.GetComponent<Placeholderscripttest>().scaleText.text = "0.00g";
+                target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0.00g";
             }
         }
     }
@@ -120,7 +128,7 @@ public class LevelManagerScaleTest : MonoBehaviour
 
         if (target.name.Equals("Scale")) //si placeholder de la balance
         {
-            target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}", objectHeld.GetComponent<ContainerObjectScript>().weight);
+            target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}g", objectHeld.GetComponent<ContainerObjectScript>().weight);
         }
 
         this.objectHeld = null;
@@ -145,12 +153,14 @@ public class LevelManagerScaleTest : MonoBehaviour
         Vector3 tempPosition = target.transform.position;
         tempPosition.y += 0.05f;
 
+        ContainerObjectScript targetScript = target.GetComponent<ContainerObjectScript>();
+
         if (objectHeld.CompareTag("container"))
         {
             //check fill errors
             foreach (KeyValuePair<string, float> pair in objectHeld.GetComponent<ContainerObjectScript>().elementsContained)
             {
-                target.GetComponent<ContainerObjectScript>().FillObject(pair.Key,pair.Value,weightGoal);
+                targetScript.FillObject(pair.Key,pair.Value,weightGoal);
             }
 
             objectHeld.LeanMove(tempPosition, 0.4f).setEaseOutQuart().setLoopPingPong(1);
@@ -159,12 +169,31 @@ public class LevelManagerScaleTest : MonoBehaviour
         }
         else if (objectHeld.CompareTag("holder"))
         {
-            if (objectHeld.GetComponent<HoldingTool>().isFull)
+            HoldingTool holdingScript = objectHeld.GetComponent<HoldingTool>();
+            if (holdingScript.isFull)
             {
                 //check fill errors
-                target.GetComponent<ContainerObjectScript>().FillObject(objectHeld.GetComponent<HoldingTool>().containsName, objectHeld.GetComponent<HoldingTool>().containsQuantity,weightGoal);
+                //********************************************************************************************************** WORKING HERE
+                if (targetScript.elementsContained.Count >= 1)
+                {
+                    foreach (KeyValuePair<string, float> pair in targetScript.elementsContained)
+                    {
+                        ErrorFilling error = new ErrorFilling("", targetScript.containerName, pair.Key, holdingScript.containsName, targetScript.danger, targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().place, targetScript.fill, targetScript.wasMixed);
+                        print(protocole.CheckFillErrors(error, allPossibleErrors.fill));
+                        
+                    }
+                }
+                else
+                {
+                    ErrorFilling error = new ErrorFilling("", targetScript.containerName, null, holdingScript.containsName, targetScript.danger, targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().place, targetScript.fill, targetScript.wasMixed);
+                    print(protocole.CheckFillErrors(error, allPossibleErrors.fill));
+                    
+                }
 
-                objectHeld.GetComponent<HoldingTool>().EmptyObject();
+
+                targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity,weightGoal);
+
+                holdingScript.EmptyObject();
 
                 objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
                 StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time
@@ -174,11 +203,11 @@ public class LevelManagerScaleTest : MonoBehaviour
             {
                 //check prelevement errors
 
-                if (target.GetComponent<ContainerObjectScript>().weight > 0) //prelevement seulement si poids pas nul
+                if (targetScript.weight > 0) //prelevement seulement si poids pas nul
                 {
-                    target.GetComponent<ContainerObjectScript>().TakeFromObject(0f, weightGoal);
+                    targetScript.TakeFromObject(0f, weightGoal);
 
-                    objectHeld.GetComponent<HoldingTool>().FillObject("", 0);
+                    holdingScript.FillObject("", 0);
                 }
                 
                 objectHeld.LeanMove(tempPosition, 0.4f).setEaseOutQuart().setLoopPingPong(1);

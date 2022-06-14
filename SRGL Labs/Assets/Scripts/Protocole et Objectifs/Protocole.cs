@@ -91,6 +91,20 @@ public class Protocole
         return flag;
     }
 
+    public bool CheckFillErrors(Error error, List<ErrorFilling> listOfErrors) //if true -> il y a eu une erreur
+    {
+        bool flag = false;
+        foreach (ErrorFilling errorFilling in listOfErrors)
+        {
+            if (errorFilling.EvaluateError(error))
+            {
+                flag = true;
+            }
+        }
+
+        return flag;
+    }
+
 
 
     //****************************************************************************
