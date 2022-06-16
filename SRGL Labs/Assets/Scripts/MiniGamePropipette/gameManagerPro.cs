@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gameManagerPropipette : MonoBehaviour
+public class gameManagerPro : MonoBehaviour
 {
 
     GameObject ItemIHold = null;
@@ -40,7 +40,9 @@ public class gameManagerPropipette : MonoBehaviour
                     isInHand = true;
                     ItemIHold = hit.collider.gameObject;
                     StopAllCoroutines();
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, myHand.transform.position));
+
+                    Vector3 temp = new Vector3(myHand.transform.position.x, myHand.transform.position.y+ 2f, myHand.transform.position.z);
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, temp));
                     
                 }
                 if(hit.collider.CompareTag("pissette") && ItemIHold == null)
@@ -81,8 +83,8 @@ public class gameManagerPropipette : MonoBehaviour
                 {
                     erlen = hit.collider.gameObject;
                     erlen.GetComponent<LiquideGestionPissette>().enabled = true;
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(erlen.transform.position.x+1.3f, erlen.transform.position.y + 2.5f, erlen.transform.position.z)));
-                    StartCoroutine(SmoothRotX(ItemIHold, 0, -0.5f)) ;
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(erlen.transform.position.x+1.4f, erlen.transform.position.y + 0.5f, erlen.transform.position.z)));
+                    StartCoroutine(SmoothRotZ(ItemIHold, 0, 0.2f)) ;
                     StartCoroutine(SmoothPos(gameObject, transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 3, erlen.transform.position.z - 8)));
                     isInHand = false;
                 }
@@ -111,7 +113,7 @@ public class gameManagerPropipette : MonoBehaviour
                 }
                 else
                 {
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 3.3f, 0)));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 5f, 0)));
                     StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
                     propipette.GetComponent<ScrollPipette>().ICanScroll = false;
 
@@ -151,7 +153,7 @@ public class gameManagerPropipette : MonoBehaviour
                     gameObject.GetComponent<LiquidGestion>().mat.SetFloat("_fill", 0);
                     propipette.transform.parent = transform.parent;
                     StartCoroutine(SmoothPos(propipette, propipette.transform.position, propBasePos));
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 3.3f, 0)));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(0, 5f, 0)));
                     StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
                     gameObject.GetComponent<LiquidGestion>().enabled = false;
                     becher.GetComponentInChildren<Camera>().enabled = false;
@@ -168,7 +170,7 @@ public class gameManagerPropipette : MonoBehaviour
             {
                 if (isInHand)
                 {
-                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(1.3f, 2.3f, 0)));
+                    StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, new Vector3(1.3f, 1.5f, 0)));
                     ItemIHold = null;
                     isInHand = false;
                 }
@@ -176,7 +178,7 @@ public class gameManagerPropipette : MonoBehaviour
                 {
                     StartCoroutine(SmoothPos(ItemIHold, ItemIHold.transform.position, myHand.transform.position));
                     StartCoroutine(SmoothPos(gameObject, transform.position, cameraBasePos));
-                    StartCoroutine(SmoothRotX(ItemIHold, -0.5f,0));
+                    StartCoroutine(SmoothRotZ(ItemIHold, 0.2f,0));
                     erlen.GetComponent<LiquideGestionPissette>().enabled = false;
                     isInHand = true;
                     erlen = null;
@@ -184,6 +186,16 @@ public class gameManagerPropipette : MonoBehaviour
             }
         }
     }
+
+
+
+
+    public void EnableMouse()
+    {
+        mouseEnabled = true;
+    }
+
+    //********************************************************** ANIMATION (old)
     public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //annimation de deplacement base
     {
         mouseEnabled = false;
@@ -197,7 +209,7 @@ public class gameManagerPropipette : MonoBehaviour
         }
         mouseEnabled = true;
     }
-    public IEnumerator SmoothRotX(GameObject targetToMove, float a, float b) //annimation de rotation base
+    /*public IEnumerator SmoothRotX(GameObject targetToMove, float a, float b) //annimation de rotation base
     {
         mouseEnabled = false;
         float startTime = Time.realtimeSinceStartup;
@@ -211,6 +223,37 @@ public class gameManagerPropipette : MonoBehaviour
         }
         mouseEnabled = true;
     }
+
+    public IEnumerator SmoothRotY(GameObject targetToMove, float a, float b) //animation de rotation base
+    {
+        mouseEnabled = false;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.rotation = new Quaternion(targetToMove.transform.rotation.x,Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.z, targetToMove.transform.rotation.w);
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+            //print(currentTimePercentage);
+        }
+        mouseEnabled = true;
+    }*/
+
+    public IEnumerator SmoothRotZ(GameObject targetToMove, float a, float b) //animation de rotation base
+    {
+        mouseEnabled = false;
+        float startTime = Time.realtimeSinceStartup;
+        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+        while (currentTimePercentage <= 1.0f)
+        {
+            targetToMove.transform.rotation = new Quaternion(targetToMove.transform.rotation.x,targetToMove.transform.rotation.y,Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.w);
+            yield return null;
+            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
+            //print(currentTimePercentage);
+        }
+        mouseEnabled = true;
+    }
+
     public IEnumerator SmoothPos2times(GameObject targetToMove, Vector3 a, Vector3 b, Vector3 c) //annimation de 2 deplacements
     {
         mouseEnabled = false;
