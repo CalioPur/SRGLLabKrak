@@ -61,7 +61,7 @@ public class Protocole
     //******************************************************************************
     //Fonction pour detection des erreurs 
 
-    public bool checkIfErrorWasDoneFill(Error error, List<ErrorFilling> listOfErrors,int nbOfElements)
+   public bool checkIfErrorWasDoneFill(Error error, List<ErrorFilling> listOfErrors,int nbOfElements) // MAY BE REMOVED
     {
         bool flag = false;
         foreach(ErrorFilling errorFilling in listOfErrors)
@@ -90,7 +90,6 @@ public class Protocole
         }
         return flag;
     }
-
     public bool CheckFillErrors(Error error, List<ErrorFilling> listOfErrors) //if true -> il y a eu une erreur
     {
         bool flag = false;

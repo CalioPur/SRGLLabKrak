@@ -27,14 +27,16 @@ public class LevelManagerScaleTest : MonoBehaviour
     //poids (temp)
     public float weightGoal;
 
-    //erreurs
-    ErrorManager allPossibleErrors;
-
     //protocole
     private Protocole protocole = new Protocole();
 
     //JSON
     public TextAsset jsonErrorFile;
+
+    ErrorManager allPossibleErrors; //erreurs
+
+    //scale open
+    public bool isScaleOpen = false;
 
     //************************************************************* FONCTIONS
 

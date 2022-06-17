@@ -62,13 +62,13 @@ public class ErrorFilling : Error
             }
             if (this.place != -1)
             {
-                if (this.place == 1)
+                if (this.place == 2)
                 {
                     flag = flag && this.place == temp.place;
                 }
                 else
                 {
-                    flag = flag && temp.place >= this.place;
+                    flag = flag && temp.place <= this.place; 
                 }
                 
             }

@@ -58,7 +58,7 @@ public class ContainerObjectScript : MonoBehaviour
 
 
         //poids
-        if (weight > goal)
+        if (weight >= goal)
         {
             weight += (weight / 2);
         }
@@ -88,7 +88,7 @@ public class ContainerObjectScript : MonoBehaviour
 
         //poids
 
-        if (weight < goal) 
+        if (weight <= goal) 
         {
             weight -= (weight / 2);
         }
@@ -101,7 +101,7 @@ public class ContainerObjectScript : MonoBehaviour
             else
             {
                 float temp = goal - weight;
-                weight -= Random.Range((temp - temp * 1 / 5), (temp + temp * 1 / 5));
+                weight += Random.Range((temp - temp * 1 / 5), (temp + temp * 1 / 5));
             }
         }
 
