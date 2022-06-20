@@ -13,5 +13,11 @@ public class Placeholderscripttest : MonoBehaviour
     //pour balance
     public TMP_Text scaleText;
 
+    //accessible ?
+    public bool isReachable;
+
+    //object occupying it
+    public GameObject occupyingObject;
+
 
 }

@@ -38,6 +38,12 @@ public class LevelManagerScaleTest : MonoBehaviour
     //scale open
     public bool isScaleOpen = false;
 
+    public GameObject scalePlaceholder;
+
+    public bool isScaleBroken = false;
+
+    public GameObject scaleDoorUp;
+
     //************************************************************* FONCTIONS
 
     void Start()
@@ -83,6 +89,11 @@ public class LevelManagerScaleTest : MonoBehaviour
                 {
                     FillHolder(target);
                 }
+                else if (target.CompareTag("scale")) //si target est poignet scale
+                {
+                    isScaleOpen = !isScaleOpen;
+                    OnScaleInteraction();
+                }
         
             }
             else //pas de contact
@@ -100,21 +111,48 @@ public class LevelManagerScaleTest : MonoBehaviour
     void HoldObject(GameObject target) // target is the object to hold
     {
         //check hold errors
-
-        this.isHolding = true;
-        this.objectHeld = target;
-
-        target.LeanMove(handPlacement.transform.position, 0.5f).setEaseOutQuart();
-        StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
+        
 
         //placeholder needs to appear - for containers only here
         if (target.CompareTag("container"))
         {
-            target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.SetActive(true);
-            if (target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.name.Equals("Scale")) //si placeholder de la balance
+            GameObject tempHiddenPlaceholder = target.GetComponent<ContainerObjectScript>().hiddenPlaceholder;
+
+
+            if (tempHiddenPlaceholder.name.Equals("Scale") && isScaleOpen) //si placeholder de la balance
             {
-                target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0.00g";
+                tempHiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0,00g";
+
+                tempHiddenPlaceholder.SetActive(true);
+                tempHiddenPlaceholder.GetComponent<Placeholderscripttest>().occupyingObject = null;
+
+                this.isHolding = true;
+                this.objectHeld = target;
+
+                target.LeanMove(handPlacement.transform.position, 0.5f).setEaseOutQuart();
+                StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
             }
+            else if (!tempHiddenPlaceholder.name.Equals("Scale"))
+            {
+
+                tempHiddenPlaceholder.SetActive(true);
+                tempHiddenPlaceholder.GetComponent<Placeholderscripttest>().occupyingObject = null;
+
+                this.isHolding = true;
+                this.objectHeld = target;
+
+                target.LeanMove(handPlacement.transform.position, 0.5f).setEaseOutQuart();
+                StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
+            }
+
+        }
+        else //if not a container
+        {
+            this.isHolding = true;
+            this.objectHeld = target;
+
+            target.LeanMove(handPlacement.transform.position, 0.5f).setEaseOutQuart();
+            StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
         }
     }
 
@@ -122,21 +160,28 @@ public class LevelManagerScaleTest : MonoBehaviour
     {
         //check put errors
 
-        this.isHolding = false;
-        this.objectHeld.GetComponent<ContainerObjectScript>().hiddenPlaceholder = target; // for containers only
-
-        this.objectHeld.LeanMove(target.transform.position, 0.5f).setEaseOutQuart();
-        StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
-
-        if (target.name.Equals("Scale")) //si placeholder de la balance
+        if (target.GetComponent<Placeholderscripttest>().isReachable)
         {
-            target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}g", objectHeld.GetComponent<ContainerObjectScript>().weight);
+            this.isHolding = false;
+
+            this.objectHeld.GetComponent<ContainerObjectScript>().hiddenPlaceholder = target; // for containers only
+            target.GetComponent<Placeholderscripttest>().occupyingObject = this.objectHeld;
+
+            this.objectHeld.LeanMove(target.transform.position, 0.5f).setEaseOutQuart();
+            StartCoroutine(TimeUntilMouseEnables(0.5f)); //animation time 
+
+            if (target.name.Equals("Scale") && !isScaleBroken) //si placeholder de la balance
+            {
+                float fakeWeight = objectHeld.GetComponent<ContainerObjectScript>().weight + Random.Range(1f,5f);
+                target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}g", fakeWeight); //affiche quelque chose de faux
+            }
+
+            this.objectHeld = null;
+
+            //placeholder will dissappear
+            target.SetActive(false);
         }
-
-        this.objectHeld = null;
-
-        //placeholder will dissappear
-        target.SetActive(false);
+        
     }
 
     void ReturnTool() 
@@ -157,7 +202,7 @@ public class LevelManagerScaleTest : MonoBehaviour
 
         ContainerObjectScript targetScript = target.GetComponent<ContainerObjectScript>();
 
-        if (objectHeld.CompareTag("container"))
+        if (objectHeld.CompareTag("container")) //si on verse avec container
         {
             //check fill errors
             foreach (KeyValuePair<string, float> pair in objectHeld.GetComponent<ContainerObjectScript>().elementsContained)
@@ -169,26 +214,42 @@ public class LevelManagerScaleTest : MonoBehaviour
             StartCoroutine(TimeUntilMouseEnables(0.8f)); //animation time
 
         }
-        else if (objectHeld.CompareTag("holder"))
+        else if (objectHeld.CompareTag("holder")) //si on verse avec holder
         {
             HoldingTool holdingScript = objectHeld.GetComponent<HoldingTool>();
-            if (holdingScript.isFull)
+            if (holdingScript.isFull && ((targetScript.hiddenPlaceholder.name.Equals("Scale")&&isScaleOpen)||!targetScript.hiddenPlaceholder.name.Equals("Scale")))
             {
                 //check fill errors
                 //********************************************************************************************************** WORKING HERE
-                if (targetScript.elementsContained.Count >= 1)
+                if (targetScript.elementsContained.Count >= 1) //Si container a 1 ou plus éléments
                 {
                     foreach (KeyValuePair<string, float> pair in targetScript.elementsContained)
                     {
                         ErrorFilling error = new ErrorFilling("", targetScript.containerName, pair.Key, holdingScript.containsName, targetScript.danger, targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().place, targetScript.fill, targetScript.wasMixed);
-                        print(protocole.CheckFillErrors(error, allPossibleErrors.fill));
-                        
+
+                        bool results = protocole.CheckFillErrors(error, allPossibleErrors.fill);
+                        print(results);
+
+                        if (results && targetScript.hiddenPlaceholder.name.Equals("Scale")) //si erreur sur scale
+                        {
+                            isScaleBroken = true;
+                            targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0,00g";
+                        }
+
                     }
                 }
-                else
+                else //sinon, si container a 0 élément
                 {
                     ErrorFilling error = new ErrorFilling("", targetScript.containerName, null, holdingScript.containsName, targetScript.danger, targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().place, targetScript.fill, targetScript.wasMixed);
-                    print(protocole.CheckFillErrors(error, allPossibleErrors.fill));
+
+                    bool results = protocole.CheckFillErrors(error, allPossibleErrors.fill);
+                    print(results);
+                    
+                    if (results && targetScript.hiddenPlaceholder.name.Equals("Scale")) //si erreur sur scale
+                    {
+                        isScaleBroken = true;
+                        targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0,00g";
+                    }
                     
                 }
 
@@ -248,6 +309,27 @@ public class LevelManagerScaleTest : MonoBehaviour
         }
     }
 
+    void OnScaleInteraction() //interaction avec la balance -> changement statut placeholder 
+    {
+        Placeholderscripttest tempScalePlaceholder = scalePlaceholder.GetComponent<Placeholderscripttest>();
+        tempScalePlaceholder.isReachable = isScaleOpen;
+
+        if (!isScaleOpen && tempScalePlaceholder.occupyingObject!=null && !isScaleBroken)
+        {
+            tempScalePlaceholder.scaleText.text = string.Format("{0:0.00}g", tempScalePlaceholder.occupyingObject.GetComponent<ContainerObjectScript>().weight);
+        }
+
+        if (!isScaleOpen) //si elle etait ouverte mais on va fermer
+        {
+            scaleDoorUp.LeanMoveLocalY(-0.055f, 0.3f);
+        }
+        else //si elle etait fermée mais on va ouvrir
+        {
+            scaleDoorUp.LeanMoveLocalY(0.055f, 0.3f);
+        }
+
+    }
+
     public IEnumerator TimeUntilMouseEnables(float seconds)
     {
         mouseEnabled = false;
@@ -256,3 +338,4 @@ public class LevelManagerScaleTest : MonoBehaviour
     }
 
 }
+ 
