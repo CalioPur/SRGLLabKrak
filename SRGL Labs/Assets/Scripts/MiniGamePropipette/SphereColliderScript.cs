@@ -23,7 +23,7 @@ public class SphereColliderScript : MonoBehaviour
         {
             isOverFilled = true;
         }
-        else if (mat.GetFloat("_fill") > fillValue-0.005 && mat.GetFloat("_fill") < fillValue + 0.005)
+        else if (mat.GetFloat("_fill") > 0 /*fillValue-0.005 && mat.GetFloat("_fill") < fillValue + 0.005*/)
         {
             isFilled = true;
         }
@@ -36,6 +36,7 @@ public class SphereColliderScript : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         isBroken = true;
+        print("a");
     }
 
 }

@@ -13,7 +13,7 @@ public class LiquidGestion : MonoBehaviour
 
     bool poireVidée=false;
     // Start is called before the first frame update
-    void awake()
+    void Awake()
     {
         mat.SetFloat("_fill", fillInput);
     }

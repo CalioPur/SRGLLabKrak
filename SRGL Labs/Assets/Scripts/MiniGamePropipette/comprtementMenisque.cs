@@ -8,7 +8,7 @@ public class comprtementMenisque : MonoBehaviour
     public float offset;
     //public Material monMat;
     //Color monMatColor;
-    private void Update()
+    private void FixedUpdate()
     { 
         this.transform.position = new Vector3(this.transform.position.x, (3.45f*matFill.GetFloat("_fill"))+offset+(this.transform.parent.transform.position.y), this.transform.position.z);
         if(getRelativePosition(transform.parent.transform, transform.position).y>1.35f)
