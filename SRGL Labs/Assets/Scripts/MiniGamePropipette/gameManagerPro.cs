@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class gameManagerPro : MonoBehaviour
 {
 
     //held item
-    bool isInHand = false;
-    GameObject ItemIHold = null;
+    [SerializeField]
+    bool isHolding = false;
+    [SerializeField]
+    GameObject objectHeld = null;
 
     //my hand
     public GameObject myHand;
@@ -52,26 +55,26 @@ public class gameManagerPro : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)) //SI JE CLIQUE SUR UN OBJET
             {
-                if ((hit.collider.CompareTag("pipette")|| hit.collider.CompareTag("pipetteA")) && ItemIHold == null) //si je clique sur la pipette sans rien avoir dans la main
+                if ((hit.collider.CompareTag("pipette")|| hit.collider.CompareTag("pipetteA")) && objectHeld == null) //si je clique sur la pipette sans rien avoir dans la main
                 {
-                    isInHand = true;
-                    ItemIHold = hit.collider.gameObject;
+                    isHolding = true;
+                    objectHeld = hit.collider.gameObject;
                     StopAllCoroutines();
 
                     Vector3 temp = new Vector3(myHand.transform.position.x, myHand.transform.position.y+ 2f, myHand.transform.position.z);
-                    SmoothPos(ItemIHold, temp);
+                    SmoothPos(objectHeld, temp);
                     
                 }
-                else if(hit.collider.CompareTag("pissette") && ItemIHold == null)
+                else if(hit.collider.CompareTag("pissette") && objectHeld == null)
                 {
-                    isInHand = true;
-                    ItemIHold = hit.collider.gameObject;
+                    isHolding = true;
+                    objectHeld = hit.collider.gameObject;
                     StopAllCoroutines();
-                    SmoothPos(ItemIHold, myHand.transform.position);
+                    SmoothPos(objectHeld, myHand.transform.position);
                 }
-                else if (hit.collider.CompareTag("propipette") && isInHand && ItemIHold.CompareTag("pipette")) //si je clique sur la propipete en ayant la pipette dans la main
+                else if (hit.collider.CompareTag("propipette") && isHolding && objectHeld.CompareTag("pipette")) //si je clique sur la propipete en ayant la pipette dans la main
                 {
-                    isInHand = true;
+                    isHolding = true;
                     StopAllCoroutines();
                     hit.collider.tag = "Untagged"; //empeche l'interaction futur avec
                     SmoothPos(propipette, new Vector3(myHand.transform.position.x, myHand.transform.position.y + 3, myHand.transform.position.z));
@@ -80,48 +83,71 @@ public class gameManagerPro : MonoBehaviour
                     
                     
                 }
-                else if (hit.collider.CompareTag("becher") && isInHand && ItemIHold.CompareTag("pipetteA") ) //si je clique sur le becher en ayant la pipettte associé a la propipette
+                else if (hit.collider.CompareTag("becher") && isHolding && objectHeld.CompareTag("pipetteA") ) //si je clique sur le becher en ayant la pipettte associé a la propipette
                 {
                     becher = hit.collider.gameObject;
                     gameObject.GetComponent<LiquidGestion>().enabled = true;
-                    StartCoroutine(SmoothPos2times(ItemIHold, ItemIHold.transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y+2f, becher.transform.position.z), new Vector3(becher.transform.position.x, becher.transform.position.y + 1.5f, becher.transform.position.z)));
+                    StartCoroutine(SmoothPos2times(objectHeld, objectHeld.transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y+2f, becher.transform.position.z), new Vector3(becher.transform.position.x, becher.transform.position.y + 1.5f, becher.transform.position.z)));
                     SmoothPos(gameObject, new Vector3(becher.transform.position.x, becher.transform.position.y + 3, becher.transform.position.z-8));
                     becher.GetComponentInChildren<Camera>().enabled = true;
-                    isInHand = false;
+                    isHolding = false;
                 }
-                else if(hit.collider.CompareTag("erlenmeyer") && isInHand && ItemIHold.CompareTag("pipetteA") && ItemIHold.GetComponentInChildren<SphereColliderScript>().isFilled) //si je clique sur l'erlenmeyer alors que ma pipette est remplie
+                else if(hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pipetteA") && objectHeld.GetComponentInChildren<SphereColliderScript>().isFilled) //si je clique sur l'erlenmeyer alors que ma pipette est remplie
                 {
                     GameObject erlen = hit.collider.gameObject;
-                    StartCoroutine(PipDansErlen(ItemIHold, erlen, ItemIHold.transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4f, erlen.transform.position.z)));
+                    StartCoroutine(PipDansErlen(objectHeld, erlen, objectHeld.transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4f, erlen.transform.position.z)));
                     SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4, erlen.transform.position.z - 8));
-                    isInHand = false;
+                    isHolding = false;
                 }
-                else if(hit.collider.CompareTag("erlenmeyer") && isInHand && ItemIHold.CompareTag("pissette"))
+                else if(hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pissette"))
                 {
                     erlen = hit.collider.gameObject;
                     erlen.GetComponent<LiquideGestionPissette>().enabled = true;
-                    SmoothPos(ItemIHold, new Vector3(erlen.transform.position.x+1.6f, erlen.transform.position.y + 1f, erlen.transform.position.z));
-                    SmoothRotZ(ItemIHold,21f);
+                    SmoothPos(objectHeld, new Vector3(erlen.transform.position.x+1.6f, erlen.transform.position.y + 1f, erlen.transform.position.z));
+                    SmoothRotZ(objectHeld,21f);
                     SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 3, erlen.transform.position.z - 8));
-                    isInHand = false;
+                    isHolding = false;
                 }
-                else if (hit.collider.CompareTag("holder") && ItemIHold==null) //si clique sur holder et main vide
+                else if (hit.collider.CompareTag("holder") && !isHolding) //si clique sur holder et main vide
                 {
                     HoldObject(hit.transform.gameObject);
+                }
+                else if (isHolding && hit.collider.CompareTag("unmovable_holder") && objectHeld.CompareTag("holder")) //tool sur unmovable holder 
+                {
+                    FillHolder(hit.transform.gameObject);
+                }
+                else if (isHolding && hit.collider.CompareTag("container")) //si main non vide et target est un container 
+                {
+                    if (!hit.collider.Equals(objectHeld)) //si target n'est pas l'objet tenu
+                    {
+                        //check fill errors before filling -> prevents you from filling if error detected (within fill container)
+                        FillContainer(hit.transform.gameObject);
+                    }
+                    else //si target est l'objet tenu
+                    {
+                        //mix ?
+                    }
+
                 }
 
             }
             else //SI JE CLIQUE DANS LE VIDE
             {
-                if (ItemIHold!=null) // SI JE TIENS QUELQUE CHOSE
+                if (objectHeld!=null) // SI JE TIENS QUELQUE CHOSE
                 {
-                    if (ItemIHold.tag == "pipette") //si je clique dans le vide et que je tiens la pipette 
+
+                    if (objectHeld.CompareTag("holder") && !objectHeld.GetComponent<HoldingTool>().isFull) //si je tiens un holder vide
+                    {
+                        ReturnTool();
+                    }
+
+                    else if (objectHeld.tag == "pipette") //si je clique dans le vide et que je tiens la pipette 
                     {
 
                         if (propipette.GetComponentInChildren<ScrollPipette>().bienPlace) //si la propipette est bien plaçé
                         {
-                            propipette.transform.parent = ItemIHold.transform; //on dit que son parent est la pipette
-                            ItemIHold.tag = "pipetteA";
+                            propipette.transform.parent = objectHeld.transform; //on dit que son parent est la pipette
+                            objectHeld.tag = "pipetteA";
                         }
                         else
                         {
@@ -129,44 +155,44 @@ public class gameManagerPro : MonoBehaviour
                             propipette.GetComponent<ScrollPipette>().enabled = false; //on désactive le script pour le reboot quand on le reprendra
                             Sphere.tag = "propipette"; //je remet son tag a propipette pour pouvoir interagir a nouveau avec
                         }
-                        if (!isInHand) //permet de remplacer dans la main ou dans l'espace si on la tiens ou si on vient de faire une action
+                        if (!isHolding) //permet de remplacer dans la main ou dans l'espace si on la tiens ou si on vient de faire une action
                         {
-                            SmoothPos(ItemIHold, myHand.transform.position);
+                            SmoothPos(objectHeld, myHand.transform.position);
                             SmoothPos(gameObject, cameraBasePos);
                             propipette.GetComponent<ScrollPipette>().ICanScroll = false;
-                            isInHand = true;
+                            isHolding = true;
                         }
                         else
                         {
-                            SmoothPos(ItemIHold, new Vector3(0, 5f, 0));
+                            SmoothPos(objectHeld, new Vector3(0, 5f, 0));
                             SmoothPos(gameObject, cameraBasePos);
                             propipette.GetComponent<ScrollPipette>().ICanScroll = false;
 
-                            ItemIHold = null;
-                            isInHand = false;
+                            objectHeld = null;
+                            isHolding = false;
                         }
 
                     }
-                    else if (ItemIHold.tag == "pipetteA") //si je clique dans le vide et que je tiens la pipette+propipette
+                    else if (objectHeld.tag == "pipetteA") //si je clique dans le vide et que je tiens la pipette+propipette
                     {
                         if (propipette.GetComponentInChildren<ScrollPipette>().bienPlace)
                         {
-                            if (!isInHand)
+                            if (!isHolding)
                             {
                                 gameObject.GetComponent<LiquidGestion>().enabled = false;
-                                StartCoroutine(SmoothPos2times(ItemIHold, ItemIHold.transform.position, new Vector3(ItemIHold.transform.position.x, ItemIHold.transform.position.y + 0.5f, ItemIHold.transform.position.z), myHand.transform.position));
+                                StartCoroutine(SmoothPos2times(objectHeld, objectHeld.transform.position, new Vector3(objectHeld.transform.position.x, objectHeld.transform.position.y + 0.5f, objectHeld.transform.position.z), myHand.transform.position));
                                 SmoothPos(gameObject, cameraBasePos);
                                 if (becher != null)
                                 {
                                     becher.GetComponentInChildren<Camera>().enabled = false;
                                 }
-                                isInHand = true;
+                                isHolding = true;
                             }
                             else
                             {
-                                SmoothPos(ItemIHold, new Vector3(0, 3.3f, 0));
-                                ItemIHold = null;
-                                isInHand = false;
+                                SmoothPos(objectHeld, new Vector3(0, 3.3f, 0));
+                                objectHeld = null;
+                                isHolding = false;
                             }
 
 
@@ -178,34 +204,34 @@ public class gameManagerPro : MonoBehaviour
                             gameObject.GetComponent<LiquidGestion>().mat.SetFloat("_fill", 0);
                             propipette.transform.parent = transform.parent;
                             SmoothPos(propipette, propBasePos);
-                            SmoothPos(ItemIHold, new Vector3(0, 5f, 0));
+                            SmoothPos(objectHeld, new Vector3(0, 5f, 0));
                             SmoothPos(gameObject, cameraBasePos);
                             gameObject.GetComponent<LiquidGestion>().enabled = false;
                             becher.GetComponentInChildren<Camera>().enabled = false;
                             propipette.GetComponent<ScrollPipette>().enabled = false;
-                            ItemIHold.tag = "pipette";
+                            objectHeld.tag = "pipette";
                             Sphere.tag = "propipette"; //je remet son tag a propipette pour pouvoir interagir a nouveau avec
-                            ItemIHold = null;
-                            isInHand = false;
+                            objectHeld = null;
+                            isHolding = false;
 
                         }
                         becher = null;
                     }
-                    else if (ItemIHold.tag == "pissette") //si je clique dans le vide alors que je tiens la pissette
+                    else if (objectHeld.tag == "pissette") //si je clique dans le vide alors que je tiens la pissette
                     {
-                        if (isInHand)
+                        if (isHolding)
                         {
-                            SmoothPos(ItemIHold, new Vector3(1.3f, 1.5f, 0));
-                            ItemIHold = null;
-                            isInHand = false;
+                            SmoothPos(objectHeld, new Vector3(1.3f, 1.5f, 0));
+                            objectHeld = null;
+                            isHolding = false;
                         }
                         else
                         {
-                            SmoothPos(ItemIHold, myHand.transform.position);
+                            SmoothPos(objectHeld, myHand.transform.position);
                             SmoothPos(gameObject, cameraBasePos);
-                            SmoothRotZ(ItemIHold, 0);
+                            SmoothRotZ(objectHeld, 0);
                             erlen.GetComponent<LiquideGestionPissette>().enabled = false;
-                            isInHand = true;
+                            isHolding = true;
                             erlen = null;
                         }
                     }
@@ -228,14 +254,116 @@ public class gameManagerPro : MonoBehaviour
     {
         //check hold errors
 
-        this.isInHand = true;
-        this.ItemIHold = target;
+        this.isHolding = true;
+        this.objectHeld = target;
 
         target.LeanMove(myHand.transform.position, 0.5f).setEaseOutQuart();
 
         mouseEnabled = false;
         LeanTween.delayedCall(0.5f, EnableMouse);
         
+    }
+
+    void ReturnTool()
+    {
+        this.isHolding = false;
+
+        objectHeld.LeanMove(objectHeld.GetComponent<HoldingTool>().originalPlacement, 0.5f).setEaseOutQuart();
+        mouseEnabled = false;
+        LeanTween.delayedCall(0.5f, EnableMouse);
+
+        this.objectHeld = null;
+    }
+
+    void FillHolder(GameObject target) //target is unmovable holder
+    {
+        if (objectHeld.GetComponent<HoldingTool>().isFull) //vider holder
+        {
+            objectHeld.GetComponent<HoldingTool>().EmptyObject();
+
+            Vector3 tempPosition = target.transform.position;
+            tempPosition.y += target.GetComponent<Collider>().bounds.size.y + 0.1f;
+
+            objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
+            mouseEnabled = false;
+            LeanTween.delayedCall(0.5f, EnableMouse);
+
+            LeanTween.delayedCall(0.5f, ReturnTool);
+        }
+        else //remplir holder
+        {
+            //check erreurs prelevement
+
+            Vector3 tempPosition = target.transform.position;
+            tempPosition.y += target.GetComponent<Collider>().bounds.size.y +0.1f;
+
+            objectHeld.LeanMove(tempPosition, 0.4f).setEaseOutQuart().setLoopPingPong(1);
+            mouseEnabled = false;
+            LeanTween.delayedCall(0.8f, EnableMouse);
+
+            objectHeld.GetComponent<HoldingTool>().FillObject(target.GetComponent<HoldingTool>().containsName, target.GetComponent<HoldingTool>().containsQuantity);
+        }
+    }
+
+    void FillContainer(GameObject target) // target is the container (prelevement ici aussi)
+    {
+
+        Vector3 tempPosition = target.transform.position;
+        tempPosition.y += target.GetComponent<Collider>().bounds.size.y + 0.1f;
+
+        ContainerObjectScript targetScript = target.GetComponent<ContainerObjectScript>();
+
+        if (objectHeld.CompareTag("container")) //si on verse avec container
+        {
+            //check fill errors
+            foreach (KeyValuePair<string, float> pair in objectHeld.GetComponent<ContainerObjectScript>().elementsContained)
+            {
+                targetScript.FillObject(pair.Key, pair.Value, objectHeld.GetComponent<ContainerObjectScript>().shaderFill);
+            }
+
+            objectHeld.GetComponent<ContainerObjectScript>().EmptyObject();
+
+            objectHeld.LeanMove(tempPosition, 0.4f).setEaseOutQuart().setLoopPingPong(1);
+            mouseEnabled = false;
+            LeanTween.delayedCall(0.8f, EnableMouse);
+
+        }
+        else if (objectHeld.CompareTag("holder")) //si on verse avec holder
+        {
+            HoldingTool holdingScript = objectHeld.GetComponent<HoldingTool>();
+            if (holdingScript.isFull)
+            {
+                //check fill errors
+                    /*foreach (KeyValuePair<string, float> pair in targetScript.elementsContained)
+                    {
+                        ErrorFilling error = new ErrorFilling("", targetScript.containerName, pair.Key, holdingScript.containsName, targetScript.danger, targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().place, targetScript.fill, targetScript.wasMixed);
+
+                        bool results = protocole.CheckFillErrors(error, allPossibleErrors.fill);
+                        print(results);
+
+                        if (results && targetScript.hiddenPlaceholder.name.Equals("Scale")) //si erreur sur scale
+                        {
+                            isScaleBroken = true;
+                            targetScript.hiddenPlaceholder.GetComponent<Placeholderscripttest>().scaleText.text = "0,00g";
+                        }
+
+                    }*/
+
+
+
+                targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, holdingScript.fillingValue);
+
+                holdingScript.EmptyObject();
+
+                objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
+                mouseEnabled = false;
+                LeanTween.delayedCall(0.5f, EnableMouse);
+
+                LeanTween.delayedCall(0.5f, ReturnTool);
+            }
+            
+
+        }
     }
 
 
@@ -255,65 +383,6 @@ public class gameManagerPro : MonoBehaviour
     }
 
     //********************************************************** ANIMATION (old)
-    /*public IEnumerator SmoothPos(GameObject targetToMove, Vector3 a, Vector3 b) //annimation de deplacement base
-    {
-        mouseEnabled = false;
-        float startTime = Time.realtimeSinceStartup;
-        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
-        while (currentTimePercentage <= 1.0f)
-        {
-            targetToMove.transform.position = Vector3.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage));
-            yield return null;
-            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / animationDuration) : (1.0f);
-        }
-        mouseEnabled = true;
-    }*/
-
-
-    /*public IEnumerator SmoothRotX(GameObject targetToMove, float a, float b) //annimation de rotation base
-    {
-        mouseEnabled = false;
-        float startTime = Time.realtimeSinceStartup;
-        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-        while (currentTimePercentage <= 1.0f)
-        {
-            targetToMove.transform.rotation = new Quaternion(Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.y, targetToMove.transform.rotation.z, targetToMove.transform.rotation.w);
-            yield return null;
-            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-            //print(currentTimePercentage);
-        }
-        mouseEnabled = true;
-    }
-
-    public IEnumerator SmoothRotY(GameObject targetToMove, float a, float b) //animation de rotation base
-    {
-        mouseEnabled = false;
-        float startTime = Time.realtimeSinceStartup;
-        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-        while (currentTimePercentage <= 1.0f)
-        {
-            targetToMove.transform.rotation = new Quaternion(targetToMove.transform.rotation.x,Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.z, targetToMove.transform.rotation.w);
-            yield return null;
-            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-            //print(currentTimePercentage);
-        }
-        mouseEnabled = true;
-    }*/
-
-    /*public IEnumerator SmoothRotZ(GameObject targetToMove, float a, float b) //animation de rotation base
-    {
-        mouseEnabled = false;
-        float startTime = Time.realtimeSinceStartup;
-        float currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-        while (currentTimePercentage <= 1.0f)
-        {
-            targetToMove.transform.rotation = new Quaternion(targetToMove.transform.rotation.x,targetToMove.transform.rotation.y,Mathf.Lerp(a, b, animationCurve.Evaluate(currentTimePercentage)), targetToMove.transform.rotation.w);
-            yield return null;
-            currentTimePercentage = (animationDuration > 0.0f) ? ((Time.realtimeSinceStartup - startTime) / (animationDuration)) : (1.0f);
-            //print(currentTimePercentage);
-        }
-        mouseEnabled = true;
-    }*/
 
     public IEnumerator SmoothPos2times(GameObject targetToMove, Vector3 a, Vector3 b, Vector3 c) //annimation de 2 deplacements
     {
@@ -395,6 +464,6 @@ public class gameManagerPro : MonoBehaviour
         gameObject.GetComponent<LiquidGestion>().enabled = false;
         //erlenmeyer.GetComponentInChildren<Wobble>().enabled = true;
         mouseEnabled = true;
-        isInHand = true;
+        isHolding = true;
     }
 }

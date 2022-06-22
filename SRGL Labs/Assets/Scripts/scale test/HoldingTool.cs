@@ -19,6 +19,9 @@ public class HoldingTool : MonoBehaviour
     //spoon only ?
     public GameObject objectHeldWithin;
 
+    //shader
+    public float fillingValue; //entre 0 et 1 -> quantité de fill
+
     //************************************************************* FONCTIONS
 
     private void Start()
