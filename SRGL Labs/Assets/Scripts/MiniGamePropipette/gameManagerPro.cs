@@ -33,6 +33,10 @@ public class gameManagerPro : MonoBehaviour
 
     //mouse
     bool mouseEnabled = true;
+
+    //await filling input -> si true, le joueur est en phase de remplissage (longue et non directe comme la cuilliere)
+    bool isAwaitingFillInput = false;
+    GameObject targetForInput;
     
    //************************************************************************************* FONCTIONS
 
@@ -55,90 +59,105 @@ public class gameManagerPro : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)) //SI JE CLIQUE SUR UN OBJET
             {
-                if ((hit.collider.CompareTag("pipette")|| hit.collider.CompareTag("pipetteA")) && objectHeld == null) //si je clique sur la pipette sans rien avoir dans la main
+                if (isAwaitingFillInput) //en attente input
                 {
-                    isHolding = true;
-                    objectHeld = hit.collider.gameObject;
-                    StopAllCoroutines();
-
-                    Vector3 temp = new Vector3(myHand.transform.position.x, myHand.transform.position.y+ 2f, myHand.transform.position.z);
-                    SmoothPos(objectHeld, temp);
-                    
-                }
-                else if(hit.collider.CompareTag("pissette") && objectHeld == null)
-                {
-                    isHolding = true;
-                    objectHeld = hit.collider.gameObject;
-                    StopAllCoroutines();
-                    SmoothPos(objectHeld, myHand.transform.position);
-                }
-                else if (hit.collider.CompareTag("propipette") && isHolding && objectHeld.CompareTag("pipette")) //si je clique sur la propipete en ayant la pipette dans la main
-                {
-                    isHolding = true;
-                    StopAllCoroutines();
-                    hit.collider.tag = "Untagged"; //empeche l'interaction futur avec
-                    SmoothPos(propipette, new Vector3(myHand.transform.position.x, myHand.transform.position.y + 3, myHand.transform.position.z));
-                    SmoothPos(gameObject,  new Vector3(myHand.transform.position.x, myHand.transform.position.y + 2f, myHand.transform.position.z - 3));
-                    propipette.GetComponent<ScrollPipette>().enabled = true;
-                    
-                    
-                }
-                else if (hit.collider.CompareTag("becher") && isHolding && objectHeld.CompareTag("pipetteA") ) //si je clique sur le becher en ayant la pipettte associé a la propipette
-                {
-                    becher = hit.collider.gameObject;
-                    gameObject.GetComponent<LiquidGestion>().enabled = true;
-                    StartCoroutine(SmoothPos2times(objectHeld, objectHeld.transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y+2f, becher.transform.position.z), new Vector3(becher.transform.position.x, becher.transform.position.y + 1.5f, becher.transform.position.z)));
-                    SmoothPos(gameObject, new Vector3(becher.transform.position.x, becher.transform.position.y + 3, becher.transform.position.z-8));
-                    becher.GetComponentInChildren<Camera>().enabled = true;
-                    isHolding = false;
-                }
-                else if(hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pipetteA") && objectHeld.GetComponentInChildren<SphereColliderScript>().isFilled) //si je clique sur l'erlenmeyer alors que ma pipette est remplie
-                {
-                    GameObject erlen = hit.collider.gameObject;
-                    StartCoroutine(PipDansErlen(objectHeld, erlen, objectHeld.transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4f, erlen.transform.position.z)));
-                    SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4, erlen.transform.position.z - 8));
-                    isHolding = false;
-                }
-                else if(hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pissette"))
-                {
-                    erlen = hit.collider.gameObject;
-                    erlen.GetComponent<LiquideGestionPissette>().enabled = true;
-                    SmoothPos(objectHeld, new Vector3(erlen.transform.position.x+1.6f, erlen.transform.position.y + 1f, erlen.transform.position.z));
-                    SmoothRotZ(objectHeld,21f);
-                    SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 3, erlen.transform.position.z - 8));
-                    isHolding = false;
-                }
-                else if (hit.collider.CompareTag("holder") && !isHolding) //si clique sur holder et main vide
-                {
-                    HoldObject(hit.transform.gameObject);
-                }
-                else if (isHolding && hit.collider.CompareTag("unmovable_holder") && objectHeld.CompareTag("holder")) //tool sur unmovable holder 
-                {
-                    FillHolder(hit.transform.gameObject);
-                }
-                else if (isHolding && hit.collider.CompareTag("container")) //si main non vide et target est un container 
-                {
-                    if (!hit.collider.Equals(objectHeld)) //si target n'est pas l'objet tenu
+                    GameObject target = hit.transform.gameObject;
+                    if (target.Equals(objectHeld))
                     {
-                        //check fill errors before filling -> prevents you from filling if error detected (within fill container)
-                        FillContainer(hit.transform.gameObject);
+                        FillContainer(targetForInput);
                     }
-                    else //si target est l'objet tenu
-                    {
-                        //mix ?
-                    }
-
                 }
+                else //pas d'attente input
+                {
+                    if (hit.collider.CompareTag("pissette") && !isHolding)
+                    {
+                        
+                        HoldObject(hit.transform.gameObject);
+                    }
+                    else if (hit.collider.CompareTag("propipette") && isHolding && objectHeld.CompareTag("pipette")) //si je clique sur la propipete en ayant la pipette dans la main
+                    {
+                        isHolding = true;
+                        StopAllCoroutines();
+                        hit.collider.tag = "Untagged"; //empeche l'interaction futur avec
+                        SmoothPos(propipette, new Vector3(myHand.transform.position.x, myHand.transform.position.y + 3, myHand.transform.position.z));
+                        SmoothPos(gameObject, new Vector3(myHand.transform.position.x, myHand.transform.position.y + 2f, myHand.transform.position.z - 3));
+                        propipette.GetComponent<ScrollPipette>().enabled = true;
+
+
+                    }
+                    else if (hit.collider.CompareTag("becher") && isHolding && objectHeld.CompareTag("pipetteA")) //si je clique sur le becher en ayant la pipettte associé a la propipette
+                    {
+                        becher = hit.collider.gameObject;
+                        gameObject.GetComponent<LiquidGestion>().enabled = true;
+                        StartCoroutine(SmoothPos2times(objectHeld, objectHeld.transform.position, new Vector3(becher.transform.position.x, becher.transform.position.y + 2f, becher.transform.position.z), new Vector3(becher.transform.position.x, becher.transform.position.y + 1.5f, becher.transform.position.z)));
+                        SmoothPos(gameObject, new Vector3(becher.transform.position.x, becher.transform.position.y + 3, becher.transform.position.z - 8));
+                        becher.GetComponentInChildren<Camera>().enabled = true;
+                        isHolding = false;
+                    }
+                    else if (hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pipetteA") && objectHeld.GetComponentInChildren<SphereColliderScript>().isFilled) //si je clique sur l'erlenmeyer alors que ma pipette est remplie
+                    {
+                        GameObject erlen = hit.collider.gameObject;
+                        StartCoroutine(PipDansErlen(objectHeld, erlen, objectHeld.transform.position, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4f, erlen.transform.position.z)));
+                        SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 4, erlen.transform.position.z - 8));
+                        isHolding = false;
+                    }
+                    else if (hit.collider.CompareTag("erlenmeyer") && isHolding && objectHeld.CompareTag("pissette"))
+                    {
+                        erlen = hit.collider.gameObject;
+                        erlen.GetComponent<LiquideGestionPissette>().enabled = true;
+                        SmoothPos(objectHeld, new Vector3(erlen.transform.position.x + 1.6f, erlen.transform.position.y + 1f, erlen.transform.position.z));
+                        SmoothRotZ(objectHeld, 21f);
+                        SmoothPos(gameObject, new Vector3(erlen.transform.position.x, erlen.transform.position.y + 3, erlen.transform.position.z - 8));
+                        isHolding = false;
+                    }
+                    else if (hit.collider.CompareTag("holder") && !isHolding) //si clique sur holder et main vide
+                    {
+                        HoldObject(hit.transform.gameObject);
+                    }
+                    else if (isHolding && hit.collider.CompareTag("unmovable_holder") && objectHeld.CompareTag("holder")) //tool sur unmovable holder 
+                    {
+                        FillHolder(hit.transform.gameObject);
+                    }
+                    else if (isHolding && hit.collider.CompareTag("container")) //si main non vide et target est un container 
+                    {
+                        if (!hit.collider.Equals(objectHeld)) //si target n'est pas l'objet tenu
+                        {
+                            //check fill errors before filling -> prevents you from filling if error detected (within fill container)
+                            if (objectHeld.CompareTag("holder") && objectHeld.GetComponent<HoldingTool>().isRequiringInput) //if holder that needs input, await input
+                            {
+                                isAwaitingFillInput = true;
+                                AwaitInuputAnimation(hit.transform.gameObject, 0.5f);
+                                targetForInput = hit.transform.gameObject;
+                            }
+                            else
+                            {
+                                FillContainer(hit.transform.gameObject);
+                            }
+
+                        }
+                        else //si target est l'objet tenu
+                        {
+                            //mix ?
+                        }
+
+                    }
+                }
+                
 
             }
             else //SI JE CLIQUE DANS LE VIDE
             {
-                if (objectHeld!=null) // SI JE TIENS QUELQUE CHOSE
+                if (isHolding) // SI JE TIENS QUELQUE CHOSE
                 {
 
                     if (objectHeld.CompareTag("holder") && !objectHeld.GetComponent<HoldingTool>().isFull) //si je tiens un holder vide
                     {
                         ReturnTool();
+                    }
+                    else if (objectHeld.CompareTag("holder") && isAwaitingFillInput) //si je tiens holder plein in awaiting input
+                    {
+                        isAwaitingFillInput = false;
+                        HoldObject(objectHeld);
                     }
 
                     else if (objectHeld.tag == "pipette") //si je clique dans le vide et que je tiens la pipette 
@@ -155,7 +174,7 @@ public class gameManagerPro : MonoBehaviour
                             propipette.GetComponent<ScrollPipette>().enabled = false; //on désactive le script pour le reboot quand on le reprendra
                             Sphere.tag = "propipette"; //je remet son tag a propipette pour pouvoir interagir a nouveau avec
                         }
-                        if (!isHolding) //permet de remplacer dans la main ou dans l'espace si on la tiens ou si on vient de faire une action
+                        if (!isHolding) //permet de remplacer dans la main ou dans l'espace si on la tiens ou si on vient de faire une action  /////////////////////////////////////////////////////////////////// <- à changer
                         {
                             SmoothPos(objectHeld, myHand.transform.position);
                             SmoothPos(gameObject, cameraBasePos);
@@ -245,6 +264,7 @@ public class gameManagerPro : MonoBehaviour
 
 
 
+
     public void EnableMouse()
     {
         mouseEnabled = true;
@@ -257,7 +277,16 @@ public class gameManagerPro : MonoBehaviour
         this.isHolding = true;
         this.objectHeld = target;
 
-        target.LeanMove(myHand.transform.position, 0.5f).setEaseOutQuart();
+        if (target.name.Equals("Pipette"))
+        {
+            Vector3 temp = new Vector3(myHand.transform.position.x, myHand.transform.position.y + 2f, myHand.transform.position.z);
+            target.LeanMove(temp, 0.5f).setEaseOutQuart();
+        }
+        else
+        {
+            target.LeanMove(myHand.transform.position, 0.5f).setEaseOutQuart();
+        }
+        
 
         mouseEnabled = false;
         LeanTween.delayedCall(0.5f, EnableMouse);
@@ -267,6 +296,8 @@ public class gameManagerPro : MonoBehaviour
     void ReturnTool()
     {
         this.isHolding = false;
+
+        this.isAwaitingFillInput = false;
 
         objectHeld.LeanMove(objectHeld.GetComponent<HoldingTool>().originalPlacement, 0.5f).setEaseOutQuart();
         mouseEnabled = false;
@@ -350,18 +381,37 @@ public class gameManagerPro : MonoBehaviour
                     }*/
 
 
+                if(!objectHeld.name.Equals("Pipette pasteur")) //si pas pipette pasteur
+                {
+                    targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, holdingScript.fillingValue);
 
-                targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, holdingScript.fillingValue);
+                    holdingScript.EmptyObject();
+                }
+                else //si pipette pasteur
+                {
+                    targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, (1-targetScript.shaderFill)/3);
+                }
+                
 
-                holdingScript.EmptyObject();
+                if (!isAwaitingFillInput)
+                {
+                    objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
+                    mouseEnabled = false;
+                    LeanTween.delayedCall(0.5f, EnableMouse);
 
-                objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
-                mouseEnabled = false;
-                LeanTween.delayedCall(0.5f, EnableMouse);
-
-                LeanTween.delayedCall(0.5f, ReturnTool);
+                    LeanTween.delayedCall(0.5f, ReturnTool);
+                }
+                
             }
             
+
+        }else if (objectHeld.CompareTag("pissette"))
+        {
+            StaticHolder holdingScript = objectHeld.GetComponent<StaticHolder>();
+            targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, holdingScript.fillingValue);
+
+            mouseEnabled = false; //prevent spam
+            LeanTween.delayedCall(0.1f, EnableMouse);
 
         }
     }
@@ -380,6 +430,16 @@ public class gameManagerPro : MonoBehaviour
         mouseEnabled = false;
         target.LeanRotateZ(goal, animationDuration/2);
         LeanTween.delayedCall(animationDuration/2, EnableMouse);
+    }
+
+    public void AwaitInuputAnimation(GameObject goal, float time)
+    {
+        Vector3 tempPosition = goal.transform.position;
+        tempPosition.y += goal.GetComponent<Collider>().bounds.size.y + 0.1f;
+
+        objectHeld.LeanMove(tempPosition, 0.5f).setEaseOutQuart();
+        mouseEnabled = false;
+        LeanTween.delayedCall(0.5f, EnableMouse);
     }
 
     //********************************************************** ANIMATION (old)
