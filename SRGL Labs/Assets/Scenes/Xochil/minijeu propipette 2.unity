@@ -2346,7 +2346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1983972230425428, guid: eadda3e770dd56048ab3f8bbdeb391ac, type: 3}
       propertyPath: m_TagString
-      value: container
+      value: pipette
       objectReference: {fileID: 0}
     - target: {fileID: 4789626238120528, guid: eadda3e770dd56048ab3f8bbdeb391ac, type: 3}
       propertyPath: m_RootOrder

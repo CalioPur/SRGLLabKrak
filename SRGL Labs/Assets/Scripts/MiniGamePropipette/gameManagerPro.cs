@@ -71,7 +71,6 @@ public class gameManagerPro : MonoBehaviour
                 {
                     if (hit.collider.CompareTag("pissette") && !isHolding)
                     {
-                        
                         HoldObject(hit.transform.gameObject);
                     }
                     else if (hit.collider.CompareTag("propipette") && isHolding && objectHeld.CompareTag("pipette")) //si je clique sur la propipete en ayant la pipette dans la main
@@ -390,6 +389,11 @@ public class gameManagerPro : MonoBehaviour
                 else //si pipette pasteur
                 {
                     targetScript.FillObject(holdingScript.containsName, holdingScript.containsQuantity, (1-targetScript.shaderFill)/3);
+                    holdingScript.containsQuantity -= 0.5f;
+                    if (holdingScript.containsQuantity < 0.1)
+                    {
+                        holdingScript.EmptyObject();
+                    }
                 }
                 
 
