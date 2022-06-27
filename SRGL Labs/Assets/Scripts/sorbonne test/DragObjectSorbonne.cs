@@ -57,8 +57,6 @@ public class DragObjectSorbonne : MonoBehaviour
 
     private void OnMouseUp() //lacher
     {
-
-
         float wantedPosition = 7.22f; //position souhaitée
         if (transform.position.y >= wantedPosition-0.1 && transform.position.y <= wantedPosition+0.1) //si bien placé
         {

@@ -13,12 +13,11 @@ public class lvlmanagersorb : MonoBehaviour
     bool glovesAreUnclean = false;
 
     // objet tenu :
-    bool isHolding = false;
-    GameObject objectHeld = null;
+    bool isHolding = true;
+    public GameObject objectHeld;
 
     // zone / vue
     string area = "sorbonne";
-    
 
     //player
     bool mouseEnabled = true;
@@ -31,6 +30,7 @@ public class lvlmanagersorb : MonoBehaviour
 
     //protocole
     private Protocole protocole = new Protocole();
+
 
     //JSON
     public TextAsset jsonErrorFile;
@@ -48,6 +48,7 @@ public class lvlmanagersorb : MonoBehaviour
 
     //vitre sorbonne
     public GameObject sorbonneWindow;
+    public GameObject sorbonne;
 
     //scale open
     /*public bool isScaleOpen = false;
@@ -63,8 +64,10 @@ public class lvlmanagersorb : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Call json
+        allPossibleErrors = this.protocole.DeserializeJSONErrors(jsonErrorFile);
 
-        DragObjectSorbonne.OnPositionSet += SetPlaceHoldersLevel;
+        DragObjectSorbonne.OnPositionSet += SetPlaceholderLevel;
 
         foreach (GameObject obj in sorbonnePlaceholders)
         {
@@ -82,7 +85,45 @@ public class lvlmanagersorb : MonoBehaviour
     {
         if (isInSorbonne) //si en vue sorbonne
         {
-            sorbonneWindow.GetComponent<DragObjectSorbonne>().enabled = false;
+            if (Input.GetMouseButtonDown(0) && mouseEnabled) //si clique gauche
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit)) //si contact avec un objet
+                {
+                    GameObject target = hit.transform.gameObject;
+
+                    if (isHolding && target.CompareTag("placeholder") && objectHeld.CompareTag("container")) // si main non vide et target est un placeholder
+                    {
+                        PlaceObject(target);
+                    }
+                }
+                
+            }
+            else if(Input.GetMouseButtonDown(1) && mouseEnabled)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit)) //si contact avec un objet
+                {
+                    GameObject target = hit.transform.gameObject;
+
+                    if (!isHolding && target.CompareTag("container")) // si main non vide et target est un placeholder
+                    {
+                        target.GetComponent<ContainerObjectScript>().capIsOn = !target.GetComponent<ContainerObjectScript>().capIsOn;
+
+                        if (!target.GetComponent<ContainerObjectScript>().capIsOn)
+                        {
+                            //erreurs bouchon
+                            ErrorLid error = new ErrorLid("", target.GetComponent<ContainerObjectScript>().danger, target.GetComponent<ContainerObjectScript>().hiddenPlaceholder.GetComponent<Placeholderscripttest>().place);
+                            print(protocole.CheckLidErrors(error, allPossibleErrors.takeOffCap));
+                        }
+                        
+                    }
+                }
+            }
         }
         else //si pas en vue sorbonne
         {
@@ -100,15 +141,19 @@ public class lvlmanagersorb : MonoBehaviour
                         isInSorbonne = true;
                         Vector3 temp = new Vector3(0,9.69f,-14.6f);
                         myCamera.LeanMove(temp, 0.5f);
-                        myCamera.LeanRotateX(17.479f, 0.5f);
-                        
+                        myCamera.LeanRotateX(17.479f, 0.5f); //movement camera
+
+                        ActivatePlaceholder(true); //placeholder visible
+                        sorbonneWindow.GetComponent<BoxCollider>().enabled = false;
+
+                        sorbonne.GetComponent<BoxCollider>().enabled = false; 
                     }
                 }
             }
         }
     }
 
-    void SetPlaceHoldersLevel(int level)
+    void SetPlaceholderLevel(int level)
     {
         foreach (GameObject obj in sorbonnePlaceholders)
         {
@@ -117,5 +162,48 @@ public class lvlmanagersorb : MonoBehaviour
         }
     }
 
-    
+    void ActivatePlaceholder(bool activated)
+    {
+        foreach (GameObject obj in sorbonnePlaceholders)
+        {
+            obj.SetActive(activated);
+            Placeholderscripttest temp = obj.GetComponent<Placeholderscripttest>(); //optionnel
+            temp.isReachable = true; 
+        }
+    }
+
+    void PlaceObject(GameObject target) // target is the placeholder selected
+    {
+        //check put errors
+
+        if (target.GetComponent<Placeholderscripttest>().isReachable)
+        {
+            this.isHolding = false;
+
+            this.objectHeld.GetComponent<ContainerObjectScript>().hiddenPlaceholder = target; // for containers only
+            target.GetComponent<Placeholderscripttest>().occupyingObject = this.objectHeld;
+
+            this.objectHeld.LeanMove(target.transform.position, 0.5f).setEaseOutQuart();
+            mouseEnabled = false;
+            LeanTween.delayedCall(0.5f, EnableMouse);
+
+            /*if (target.name.Equals("Scale") && !isScaleBroken) //si placeholder de la balance
+            {
+                float fakeWeight = objectHeld.GetComponent<ContainerObjectScript>().weight + Random.Range(1f, 5f);
+                target.GetComponent<Placeholderscripttest>().scaleText.text = string.Format("{0:0.00}g", fakeWeight); //affiche quelque chose de faux
+            }*/
+
+            this.objectHeld = null;
+
+            //placeholder will dissappear
+            target.SetActive(false);
+        }
+
+    }
+
+    void EnableMouse()
+    {
+        mouseEnabled = true;
+    }
+
 }

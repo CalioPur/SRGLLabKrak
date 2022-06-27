@@ -104,6 +104,19 @@ public class Protocole
         return flag;
     }
 
+    public bool CheckLidErrors(Error error, List<ErrorLid> listOfErrors)
+    {
+        bool flag = false;
+        foreach (ErrorLid errorLid in listOfErrors)
+        {
+            if (errorLid.EvaluateError(error))
+            {
+                flag = true;
+            }
+        }
+
+        return flag;
+    }
 
 
     //****************************************************************************
