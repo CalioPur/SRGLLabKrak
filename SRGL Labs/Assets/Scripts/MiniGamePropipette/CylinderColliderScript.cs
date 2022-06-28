@@ -6,22 +6,12 @@ public class CylinderColliderScript : MonoBehaviour
 {
     public bool isPlaced = false;
     public ScrollPipette scroll;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void OnTriggerEnter(Collider other)
     {
         scroll.step = 0.05f;
         isPlaced = true;
+        //print("hey");
     }
     private void OnTriggerExit(Collider other)
     {

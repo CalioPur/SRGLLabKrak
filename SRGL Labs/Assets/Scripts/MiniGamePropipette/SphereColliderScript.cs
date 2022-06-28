@@ -36,7 +36,6 @@ public class SphereColliderScript : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         isBroken = true;
-        print("a");
     }
 
 }

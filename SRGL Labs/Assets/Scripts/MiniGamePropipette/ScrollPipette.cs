@@ -28,6 +28,7 @@ public class ScrollPipette : MonoBehaviour
         LastTimeSinceScroll = 0;
         ICanScroll = true;
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -59,7 +60,6 @@ public class ScrollPipette : MonoBehaviour
         {
             if (!sphereColliderScript.isBroken)
             {
-                
                 if (transform.position.y < 5.4)
                 {
                     mText.SetText("La propipette est en place");
