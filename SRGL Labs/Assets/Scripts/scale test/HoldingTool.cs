@@ -52,4 +52,10 @@ public class HoldingTool : MonoBehaviour
         this.isFull = false;
     }
 
+    public void EmptyPipette() //(specifique)
+    {
+        this.containsName = null;
+        this.containsQuantity = 0;
+    }
+
 }
