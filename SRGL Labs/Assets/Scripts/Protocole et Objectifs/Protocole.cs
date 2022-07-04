@@ -38,8 +38,8 @@ public class Protocole
         //Debug.Log(objectivesCounter);
         //Debug.Log(listOfObjectives[objectivesCounter].Evaluate(obj));
         //Enlever premiere condition dans premier if si terminer le protocole empeche les interactions plus tard qui causent des index out of range
-        if (objectivesCounter < listOfObjectives.Count && listOfObjectives[objectivesCounter].Evaluate(obj))
-        {
+        //if (objectivesCounter < listOfObjectives.Count && listOfObjectives[objectivesCounter].Evaluate(obj)) //check si objectif ok
+        //{
             //Do something - Notifier les toggles
             Debug.Log("Notify toggles");
             if (OnObjectiveSuccessfullyCompletedEvent != null)
@@ -55,7 +55,7 @@ public class Protocole
                 //Do something - Indiquer que le protocole est terminé
                 Debug.Log("End of protocole");
             }
-        }
+        //}
     }
 
     //******************************************************************************

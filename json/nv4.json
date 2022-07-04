@@ -1,0 +1,16 @@
+{
+    "contains" :[
+        {
+            "container" : "flask",
+            "content" : {"hcl" : 42,"zncl2" : 68},
+            "melange" : false,
+            "numero" : 1
+        },
+        {
+            "container" : "flask",
+            "content" : {"hcl" : 42,"zncl2" : 68},
+            "melange" : false,
+            "numero" : 1
+        }
+    ]
+}
