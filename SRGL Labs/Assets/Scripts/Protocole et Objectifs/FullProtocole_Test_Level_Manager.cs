@@ -53,13 +53,13 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
         //this.protocole.DeserializeJSONProtocole(); 
 
-        Dictionary<string, int> d1 = new Dictionary<string, int>();
+        /*Dictionary<string, int> d1 = new Dictionary<string, int>();
         d1.Add("eau distillée", 100);
         ObjectiveContainsDictionary obj1 = new ObjectiveContainsDictionary(d1, 1);
         this.protocole.listOfObjectives.Add(obj1);
         this.protocole.dictionaryOfObjectives.Add(obj1, false);
 
-        /*//faire une pesee -> test contains strict
+        //faire une pesee -> test contains strict
         Dictionary<string, int> d2 = new Dictionary<string, int>();
         d2.Add("poudre", 25);
         ObjectiveContainsDictionary obj2 = new ObjectiveContainsDictionary(d2, 1);
