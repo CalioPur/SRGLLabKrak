@@ -1939,6 +1939,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 934797339}
     m_Modifications:
+    - target: {fileID: 5769608499492148926, guid: d6da621dfbf8c604bb7b420dbc299612, type: 3}
+      propertyPath: m_FillAmount
+      value: 0.558
+      objectReference: {fileID: 0}
     - target: {fileID: 5769608499647724306, guid: d6da621dfbf8c604bb7b420dbc299612, type: 3}
       propertyPath: m_Name
       value: Gauge
