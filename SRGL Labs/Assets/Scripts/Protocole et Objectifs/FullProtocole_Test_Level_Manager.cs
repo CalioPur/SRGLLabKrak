@@ -18,7 +18,9 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
     private Protocole protocole = new Protocole();
 
     //Liste des toggles (ordonnés en fonction des objectifs)
-    public List<GameObject> toggleList;
+    public List<GameObject> toggleList1;
+    public List<GameObject> toggleList2;
+
 
     public GameObject isHolding = null;
     public Vector3 positionBeforeHeld;
@@ -40,7 +42,8 @@ public class FullProtocole_Test_Level_Manager : MonoBehaviour
 
     void ToggleUpdate()
     {
-        toggleList[this.protocole.objectivesCounter].GetComponent<Toggle>().isOn = true;
+        toggleList1[this.protocole.objectivesCounter].GetComponent<Toggle>().isOn = true;
+        toggleList2[this.protocole.objectivesCounter].GetComponent<Toggle>().isOn = true;
     }
 
     private void Start()
